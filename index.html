@@ -11,6 +11,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
+  <!-- PDF -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+
   <style>
     :root{
       --bg:#0b0c10;
@@ -73,6 +77,22 @@
       padding:6px 10px;border-radius:999px;border:1px solid var(--line);
       background:rgba(255,255,255,.03);color:var(--muted);font-size:12px
     }
+
+    .tabs{
+      display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;
+      border:1px solid var(--line);border-radius:14px;padding:8px;background:rgba(255,255,255,.02);
+      align-items:center;
+    }
+    .tab{
+      padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+      background:rgba(0,0,0,.18);color:var(--muted);
+    }
+    .tab.active{
+      background:rgba(30,144,255,.16);
+      border-color:rgba(30,144,255,.35);
+      color:var(--text);
+    }
+
     .grid{display:grid;grid-template-columns: 1.05fr .95fr;gap:14px;margin-top:14px}
     @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
 
@@ -82,6 +102,7 @@
     }
     .card h2{margin:0 0 10px 0;font-size:14px;color:#d7dbef}
     .muted{color:var(--muted)}
+
     .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
     @media (max-width: 720px){ .kpis{grid-template-columns:repeat(2,1fr)} }
     .kpi{
@@ -116,7 +137,6 @@
     }
     .tag.ok{color:var(--green);border-color:rgba(54,211,153,.35)}
     .tag.no{color:var(--red);border-color:rgba(239,68,68,.35)}
-    .tag.wait{color:var(--yellow);border-color:rgba(251,191,36,.35)}
     .small{font-size:12px;color:var(--muted)}
     .hidden{display:none !important}
     .toast{
@@ -124,10 +144,38 @@
       background:#11131a;border:1px solid var(--line);border-radius:14px;
       padding:10px 12px;min-width:260px;max-width:420px;
       box-shadow: 0 14px 40px rgba(0,0,0,.45);
+      z-index:9999;
     }
     .toast.err{border-color:rgba(239,68,68,.35)}
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,monospace}
     .sep{height:1px;background:rgba(255,255,255,.06);margin:10px 0}
+
+    /* Calendar */
+    .calHeader{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+    .calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:10px;}
+    .calDow{
+      text-align:center;font-size:12px;color:var(--muted);
+      padding:6px 0;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(0,0,0,.14);
+    }
+    .calDay{
+      min-height:86px;border:1px solid rgba(255,255,255,.06);border-radius:14px;
+      background:rgba(0,0,0,.16);padding:8px;cursor:pointer;position:relative;
+    }
+    .calDay:hover{border-color:rgba(30,144,255,.25)}
+    .calDay .n{font-size:12px;color:#cfd3ea}
+    .calDay .pill{
+      margin-top:6px;font-size:11px;color:var(--muted);
+      border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);
+      border-radius:999px;padding:3px 8px;display:inline-block;max-width:100%;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
+    .calDay.today{outline:2px solid rgba(54,211,153,.35)}
+    .calDay.has{border-color:rgba(251,191,36,.22)}
+    .calSide{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-top:14px}
+    @media(max-width:980px){ .calSide{grid-template-columns:1fr} }
+    .noteBox{border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:10px;background:rgba(0,0,0,.18)}
+    .listMini{display:flex;flex-direction:column;gap:8px}
+    .mini{border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);border-radius:14px;padding:10px;}
+    .mini b{font-size:12px}
   </style>
 </head>
 
@@ -151,235 +199,332 @@
       </div>
     </header>
 
-    <div class="grid">
-      <!-- LEFT -->
-      <div class="card">
-        <h2>Cadastro / Edição</h2>
+    <div class="tabs">
+      <button id="tabRecruit" class="tab active">Recrutamento</button>
+      <button id="tabScreen" class="tab">Screening</button>
+      <span class="chip" id="notiChip">Notificações: internas</span>
+      <button id="enableNotiBtn" class="ghost">Ativar notificação do navegador</button>
+    </div>
 
-        <div class="formgrid">
-          <div class="field full">
-            <label>Nome / Identificador</label>
-            <input id="nome" placeholder="Ex: Iniciais + código / nome" />
-          </div>
+    <!-- RECRUTAMENTO -->
+    <div id="viewRecruit">
+      <div class="grid">
+        <!-- LEFT -->
+        <div class="card">
+          <h2>Cadastro / Edição</h2>
 
-          <div class="field">
-            <label>Status</label>
-            <select id="status">
-              <option value="">Selecione</option>
-              <option>Triagem</option>
-              <option>Pré-screening</option>
-              <option>Screening</option>
-              <option>Randomizado</option>
-              <option>Falha de screening</option>
-              <option>Em follow-up</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>Estudo</label>
-            <input id="estudo" placeholder="Ex: EVOKE-04 / SYMPHONY-1" />
-          </div>
-
-          <div class="field">
-            <label>Data (referência)</label>
-            <input id="data" type="date" />
-          </div>
-
-          <div class="field">
-            <label>Encaminhador</label>
-            <select id="encaminhador">
-              <option value="">Selecione</option>
-              <option>Dr. Milton</option>
-              <option>Dr. Hélio</option>
-              <option>Dr. Thiago</option>
-              <option>ALTY</option>
-              <option>Outro</option>
-            </select>
-          </div>
-
-          <div class="field full hidden" id="wrapOutroEnc">
-            <label>Outro encaminhador</label>
-            <input id="outroEncaminhador" placeholder="Digite o encaminhador" />
-          </div>
-
-          <div class="field">
-            <label>TCLE agendado?</label>
-            <select id="tcleAgendado">
-              <option>Não</option>
-              <option>Sim</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>TCLE assinado?</label>
-            <select id="tcleAssinado">
-              <option>Não</option>
-              <option>Sim</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>Elegível?</label>
-            <select id="elegivel">
-              <option>Sim</option>
-              <option>Não</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>Motivo não elegível</label>
-            <select id="motivoNaoElegivel">
-              <option value="">(se aplicável)</option>
-              <option>Progressão</option>
-              <option>Perda de follow-up</option>
-              <option>Recusa do paciente</option>
-              <option>Outro</option>
-            </select>
-          </div>
-
-          <div class="field full hidden" id="wrapOutroMotivo">
-            <label>Outro motivo</label>
-            <input id="outroMotivo" placeholder="Digite o motivo" />
-          </div>
-
-          <div class="field full">
-            <label>Observações</label>
-            <textarea id="obs" placeholder="Notas rápidas (sem dados sensíveis desnecessários)"></textarea>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button id="saveBtn" class="ok">Salvar</button>
-          <button id="cancelBtn" class="ghost hidden">Cancelar edição</button>
-          <span class="small" id="accessHint">Faça login para salvar.</span>
-        </div>
-
-        <div class="sep"></div>
-
-        <!-- ADMIN PANEL -->
-        <div id="adminPanel" class="hidden">
-          <h2>Painel Admin</h2>
-          <div class="small muted">Crie/ative usuários e defina perfil. (Requer role=admin)</div>
-
-          <div class="formgrid" style="margin-top:10px">
-            <div class="field">
-              <label>E-mail do usuário</label>
-              <input id="adminUserEmail" placeholder="ex: assistente@..." />
-            </div>
-            <div class="field">
-              <label>Senha temporária</label>
-              <input id="adminUserPass" placeholder="mín. 6 chars" />
-            </div>
-            <div class="field">
-              <label>Role</label>
-              <select id="adminUserRole">
-                <option value="assistant">assistant</option>
-                <option value="admin">admin</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Ativo</label>
-              <select id="adminUserActive">
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </div>
+          <div class="formgrid">
             <div class="field full">
-              <button id="adminCreateBtn" class="btn">Criar usuário + definir role</button>
-              <div class="small muted" style="margin-top:6px">
-                Obs: isso usa uma Function (mais seguro). Se você não quiser Functions, eu te passo o fluxo manual pelo console.
+              <label>Nome / Identificador</label>
+              <input id="nome" placeholder="Ex: Iniciais + código / nome" />
+            </div>
+
+            <div class="field">
+              <label>Status</label>
+              <select id="status">
+                <option value="">Selecione</option>
+                <option>Em avaliação</option>
+                <option>Pré-screening</option>
+                <option>Screening</option>
+                <option>Randomizado</option>
+                <option>Falha de screening</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Estudo</label>
+              <input id="estudo" placeholder="Ex: EVOKE-04 / SYMPHONY-1" />
+            </div>
+
+            <div class="field">
+              <label>Data (referência)</label>
+              <input id="data" type="date" />
+            </div>
+
+            <div class="field">
+              <label>Encaminhador</label>
+              <select id="encaminhador">
+                <option value="">Selecione</option>
+                <option>Dr. Milton</option>
+                <option>Dr. Hélio</option>
+                <option>Dr. Thiago</option>
+                <option>ALTY</option>
+                <option>Outro</option>
+              </select>
+            </div>
+
+            <div class="field full hidden" id="wrapOutroEnc">
+              <label>Outro encaminhador</label>
+              <input id="outroEncaminhador" placeholder="Digite o encaminhador" />
+            </div>
+
+            <div class="field">
+              <label>TCLE agendado?</label>
+              <select id="tcleAgendado">
+                <option>Não</option>
+                <option>Sim</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>TCLE assinado?</label>
+              <select id="tcleAssinado">
+                <option>Não</option>
+                <option>Sim</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Elegível?</label>
+              <select id="elegivel">
+                <option>Sim</option>
+                <option>Não</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Motivo não elegível</label>
+              <select id="motivoNaoElegivel">
+                <option value="">(se aplicável)</option>
+                <option>Progressão</option>
+                <option>Perda de follow-up</option>
+                <option>Recusa do paciente</option>
+                <option>Outro</option>
+              </select>
+            </div>
+
+            <div class="field full hidden" id="wrapOutroMotivo">
+              <label>Outro motivo</label>
+              <input id="outroMotivo" placeholder="Digite o motivo" />
+            </div>
+
+            <div class="field full">
+              <label>Observações</label>
+              <textarea id="obs" placeholder="Notas rápidas (sem dados sensíveis desnecessários)"></textarea>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="saveBtn" class="ok">Salvar</button>
+            <button id="cancelBtn" class="ghost hidden">Cancelar edição</button>
+            <span class="small" id="accessHint">Faça login para salvar.</span>
+          </div>
+
+          <div class="sep"></div>
+
+          <div id="adminPanel" class="hidden">
+            <h2>Painel Admin</h2>
+            <div class="small muted">Criação segura de usuários é via Firebase Console (Authentication) + liberação no Firestore.</div>
+            <div class="small muted" style="margin-top:8px">
+              Dica: a dupla cria login no Authentication, faz login 1x, e você libera o UID em <b>Firestore &gt; users</b>.
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="card">
+          <h2>Visão geral</h2>
+
+          <div class="kpis">
+            <div class="kpi blue">
+              <div class="label">Total</div>
+              <div id="kpiTotal" class="val">0</div>
+              <div class="hint">na visão atual</div>
+            </div>
+            <div class="kpi green">
+              <div class="label">Elegíveis</div>
+              <div id="kpiElig" class="val">0</div>
+              <div class="hint">elegível=Sim</div>
+            </div>
+            <div class="kpi red">
+              <div class="label">Não elegíveis</div>
+              <div id="kpiNaoElig" class="val">0</div>
+              <div class="hint">elegível=Não</div>
+            </div>
+            <div class="kpi yellow">
+              <div class="label">TCLE assinado</div>
+              <div id="kpiTCLE" class="val">0</div>
+              <div class="hint">tcleAssinado=Sim</div>
+            </div>
+
+            <div class="kpi blue">
+              <div class="label">Encaminhadores</div>
+              <div id="kpiEnc" class="val">0</div>
+              <div class="hint">encaminhador preenchido</div>
+            </div>
+            <div class="kpi green">
+              <div class="label">Randomizados</div>
+              <div id="kpiRand" class="val">0</div>
+              <div class="hint">status=Randomizado</div>
+            </div>
+            <div class="kpi red">
+              <div class="label">Falha de screening</div>
+              <div id="kpiFail" class="val">0</div>
+              <div class="hint">status=Falha de screening</div>
+            </div>
+            <div class="kpi yellow">
+              <div class="label">Conversão</div>
+              <div id="kpiConv" class="val">0%</div>
+              <div class="hint">Rand / Elegíveis</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px" class="formgrid">
+            <div class="field">
+              <label>Busca</label>
+              <input id="search" placeholder="nome / status / estudo / encaminhador" />
+            </div>
+            <div class="field">
+              <label>Mês</label>
+              <input id="monthFilter" type="month" />
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <select id="statusFilter">
+                <option value="">Todos</option>
+                <option>Em avaliação</option>
+                <option>Pré-screening</option>
+                <option>Screening</option>
+                <option>Randomizado</option>
+                <option>Falha de screening</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Ações</label>
+              <div class="row">
+                <button id="clearMonthBtn" class="ghost">Limpar mês</button>
+                <button id="exportBtn" class="ghost">Exportar CSV</button>
+                <button id="exportPdfBtn" class="ghost">Baixar PDF</button>
               </div>
             </div>
           </div>
+
+          <div class="sep"></div>
+
+          <h2>Indicadores (gráfico)</h2>
+          <canvas id="statusChart" height="150"></canvas>
         </div>
       </div>
 
-      <!-- RIGHT -->
-      <div class="card">
-        <h2>Visão geral</h2>
-
-        <div class="kpis">
-          <div class="kpi blue">
-            <div class="label">Total</div>
-            <div id="kpiTotal" class="val">0</div>
-            <div class="hint">na visão atual</div>
-          </div>
-          <div class="kpi green">
-            <div class="label">Elegíveis</div>
-            <div id="kpiElig" class="val">0</div>
-            <div class="hint">elegível=Sim</div>
-          </div>
-          <div class="kpi red">
-            <div class="label">Não elegíveis</div>
-            <div id="kpiNaoElig" class="val">0</div>
-            <div class="hint">elegível=Não</div>
-          </div>
-          <div class="kpi yellow">
-            <div class="label">TCLE assinado</div>
-            <div id="kpiTCLE" class="val">0</div>
-            <div class="hint">tcleAssinado=Sim</div>
-          </div>
+      <div class="card" style="margin-top:14px">
+        <h2>Pacientes</h2>
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Status</th>
+                <th>Estudo</th>
+                <th>Encaminhador</th>
+                <th>Elegível</th>
+                <th>Motivo</th>
+                <th>Data</th>
+                <th>TCLE</th>
+                <th class="nowrap">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
         </div>
+        <div id="emptyMsg" class="small muted" style="margin-top:10px"></div>
+      </div>
+    </div>
 
-        <div style="margin-top:12px" class="formgrid">
-          <div class="field">
-            <label>Busca</label>
-            <input id="search" placeholder="nome / status / estudo / encaminhador" />
+    <!-- SCREENING -->
+    <div id="viewScreen" class="hidden">
+      <div class="card">
+        <div class="calHeader">
+          <div>
+            <h2>Screening — Calendário (mês atual + próximos)</h2>
+            <div class="small muted">Cadastre procedimentos por dia e vincule ao paciente. Alertas: hoje e amanhã (na tela) + opcional do navegador.</div>
           </div>
-          <div class="field">
-            <label>Mês</label>
-            <input id="monthFilter" type="month" />
-          </div>
-          <div class="field">
-            <label>Status</label>
-            <select id="statusFilter">
-              <option value="">Todos</option>
-              <option>Triagem</option>
-              <option>Pré-screening</option>
-              <option>Screening</option>
-              <option>Randomizado</option>
-              <option>Falha de screening</option>
-              <option>Em follow-up</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Ações</label>
-            <div class="row">
-              <button id="clearMonthBtn" class="ghost">Limpar mês</button>
-              <button id="exportBtn" class="ghost">Exportar CSV</button>
-            </div>
+          <div class="row">
+            <button id="prevMonthBtn" class="ghost">◀ Mês</button>
+            <span class="chip" id="calTitle">—</span>
+            <button id="nextMonthBtn" class="ghost">Mês ▶</button>
           </div>
         </div>
 
         <div class="sep"></div>
 
-        <h2>Status (gráfico)</h2>
-        <canvas id="statusChart" height="150"></canvas>
+        <div class="calSide">
+          <div>
+            <div class="calGrid" id="calDows"></div>
+            <div class="calGrid" id="calGrid"></div>
+          </div>
+
+          <div>
+            <div class="noteBox">
+              <h2 style="margin-bottom:6px">Novo procedimento</h2>
+              <div class="small muted" id="pickedDayLabel">Selecione um dia no calendário.</div>
+
+              <div class="formgrid" style="margin-top:10px">
+                <div class="field full">
+                  <label>Paciente</label>
+                  <select id="scrPatient"></select>
+                </div>
+                <div class="field">
+                  <label>Tipo</label>
+                  <select id="scrType">
+                    <option value="">Selecione</option>
+                    <option>Consulta</option>
+                    <option>Exame laboratorial</option>
+                    <option>Imagem (TC/RM/PET)</option>
+                    <option>Procedimento (biópsia/medula)</option>
+                    <option>Envio para central</option>
+                    <option>Assinatura TCLE</option>
+                    <option>Outro</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Hora (opcional)</label>
+                  <input id="scrTime" type="time" />
+                </div>
+                <div class="field full">
+                  <label>Descrição</label>
+                  <input id="scrTitle" placeholder="Ex: PET-CT / Hemograma / Consulta Dr. X" />
+                </div>
+                <div class="field full">
+                  <label>Notas</label>
+                  <textarea id="scrNotes" placeholder="Observação interna (sem dados sensíveis desnecessários)"></textarea>
+                </div>
+              </div>
+
+              <div class="actions">
+                <button id="scrSaveBtn" class="ok">Salvar procedimento</button>
+                <button id="scrClearBtn" class="ghost">Limpar</button>
+              </div>
+            </div>
+
+            <div class="sep"></div>
+
+            <h2>Próximos alertas</h2>
+            <div class="listMini" id="alertsBox"></div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <h2>Procedimentos do mês</h2>
+        <div class="tablewrap">
+          <table style="min-width:980px">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Paciente</th>
+                <th>Tipo</th>
+                <th>Descrição</th>
+                <th>Notas</th>
+                <th class="nowrap">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="scrTableBody"></tbody>
+          </table>
+        </div>
+        <div id="scrEmptyMsg" class="small muted" style="margin-top:10px"></div>
       </div>
     </div>
 
-    <div class="card" style="margin-top:14px">
-      <h2>Pacientes</h2>
-      <div class="tablewrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Status</th>
-              <th>Estudo</th>
-              <th>Encaminhador</th>
-              <th>Elegível</th>
-              <th>Motivo</th>
-              <th>Data</th>
-              <th>TCLE</th>
-              <th class="nowrap">Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody"></tbody>
-        </table>
-      </div>
-      <div id="emptyMsg" class="small muted" style="margin-top:10px"></div>
-    </div>
   </div>
 
   <div id="toast" class="toast hidden"></div>
@@ -388,15 +533,9 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getFirestore, collection, doc, setDoc, deleteDoc, getDoc,
-    onSnapshot, query, orderBy, serverTimestamp
+    onSnapshot, query, orderBy, serverTimestamp, where, getDocs
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import {
-    getAuth,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged,
-    createUserWithEmailAndPassword
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
   // ======= firebaseConfig (SEU) =======
   const firebaseConfig = {
@@ -414,7 +553,8 @@
   const auth = getAuth(app);
 
   // ======= Estado =======
-  let DB = [];
+  let DB = [];              // patients
+  let EVENTS = [];          // screening_events (range por mês)
   let CHART = null;
   let editId = null;
 
@@ -422,10 +562,18 @@
   let CURRENT_ROLE = null;   // "admin" | "assistant"
   let IS_ACTIVE = false;
 
+  const DOWS = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+  let calBase = new Date(); calBase.setDate(1);
+  let pickedDateISO = "";
+
+  let unsubPatients = null;
+  let unsubEvents = null;
+
   // ======= Helpers =======
   const $ = (id) => document.getElementById(id);
   const esc = (s) => (s ?? "").toString().replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
   const uid = () => "p_" + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+  const uidEv = () => "e_" + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
 
   function toast(msg, err=false){
     const t = $("toast");
@@ -435,6 +583,12 @@
     setTimeout(()=>t.classList.add("hidden"), 2400);
   }
 
+  function iso(d){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const dd = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${dd}`;
+  }
   function parseMonth(v){
     if(!v) return null;
     const [y,m] = v.split("-").map(Number);
@@ -445,6 +599,62 @@
     if(!dateStr) return false;
     const d = new Date(dateStr);
     return d.getFullYear()===sel.y && (d.getMonth()+1)===sel.m;
+  }
+  function addMonths(d, n){
+    const x = new Date(d);
+    x.setMonth(x.getMonth()+n);
+    x.setDate(1);
+    return x;
+  }
+  function startOfMonth(d){
+    const x = new Date(d);
+    x.setDate(1); x.setHours(0,0,0,0);
+    return x;
+  }
+  function endOfMonth(d){
+    const x = new Date(d);
+    x.setMonth(x.getMonth()+1);
+    x.setDate(0); x.setHours(23,59,59,999);
+    return x;
+  }
+
+  // ======= Tabs =======
+  function setTab(which){
+    const isRecruit = which === "recruit";
+    $("tabRecruit").classList.toggle("active", isRecruit);
+    $("tabScreen").classList.toggle("active", !isRecruit);
+    $("viewRecruit").classList.toggle("hidden", !isRecruit);
+    $("viewScreen").classList.toggle("hidden", isRecruit);
+    if(!isRecruit) refreshScreeningUI();
+  }
+  $("tabRecruit").onclick = () => setTab("recruit");
+  $("tabScreen").onclick = () => setTab("screen");
+
+  // ======= Notificações (opcional navegador) =======
+  function canNotify(){ return "Notification" in window; }
+  function setNotiChip(){
+    if(!canNotify()) return $("notiChip").textContent = "Notificações: internas";
+    const perm = Notification.permission;
+    if(perm === "granted") $("notiChip").textContent = "Notificações: navegador + internas";
+    else if(perm === "denied") $("notiChip").textContent = "Notificações: internas (bloqueadas no navegador)";
+    else $("notiChip").textContent = "Notificações: internas (navegador não ativado)";
+  }
+  $("enableNotiBtn").addEventListener("click", async ()=>{
+    if(!canNotify()) return toast("Seu navegador não suporta Notification API", true);
+    try{
+      const perm = await Notification.requestPermission();
+      setNotiChip();
+      if(perm === "granted") toast("Notificações do navegador ativadas!");
+      else toast("Notificação do navegador não foi liberada.", true);
+    }catch{
+      toast("Não foi possível ativar notificação do navegador.", true);
+    }
+  });
+  setNotiChip();
+  function pushBrowserNotification(title, body){
+    if(!canNotify()) return;
+    if(Notification.permission !== "granted") return;
+    try{ new Notification(title, { body }); }catch{}
   }
 
   // ======= UI toggles =======
@@ -476,16 +686,10 @@
     const email = $("emailLogin").value.trim();
     const pass = $("passwordLogin").value;
     if(!email || !pass) return toast("Informe email e senha", true);
-
-    try{
-      await signInWithEmailAndPassword(auth, email, pass);
-    }catch(e){
-      toast("Erro no login: " + (e?.message || e), true);
-    }
+    try{ await signInWithEmailAndPassword(auth, email, pass); }
+    catch(e){ toast("Erro no login: " + (e?.message || e), true); }
   }
-  async function logout(){
-    await signOut(auth);
-  }
+  async function logout(){ await signOut(auth); }
   $("loginBtn").addEventListener("click", login);
   $("logoutBtn").addEventListener("click", logout);
 
@@ -504,31 +708,46 @@
   }
 
   // ======= Firestore realtime =======
-  function startRealtime(){
+  function startRealtimePatients(){
     const q = query(collection(db, "patients"), orderBy("data","desc"));
     return onSnapshot(q, (snap)=>{
       DB = snap.docs.map(d => d.data());
       refreshUI();
-    }, (err)=>{
-      console.error(err);
-      toast("Erro ao sincronizar Firestore", true);
-    });
+      refreshScreeningUI();
+    }, ()=> toast("Erro ao sincronizar pacientes", true));
   }
-  let unsubscribe = null;
+
+  function startRealtimeEventsForCalendar(){
+    const from = iso(startOfMonth(calBase));
+    const to = iso(endOfMonth(addMonths(calBase, 1))); // mês atual + próximo
+
+    const q = query(
+      collection(db, "screening_events"),
+      where("date", ">=", from),
+      where("date", "<=", to)
+    );
+
+    return onSnapshot(q, (snap)=>{
+      EVENTS = snap.docs.map(d=>d.data()).sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+      refreshScreeningUI();
+      buildAlerts();
+    }, ()=> toast("Erro ao sincronizar screening", true));
+  }
 
   onAuthStateChanged(auth, async (user)=>{
     CURRENT_USER = user || null;
 
-    if(unsubscribe){ unsubscribe(); unsubscribe = null; }
+    if(unsubPatients){ unsubPatients(); unsubPatients=null; }
+    if(unsubEvents){ unsubEvents(); unsubEvents=null; }
 
     if(!user){
       setAuthUI(false);
-      CURRENT_ROLE = null; IS_ACTIVE = false;
+      CURRENT_ROLE=null; IS_ACTIVE=false;
       $("roleChip").textContent = "Não autenticado";
       $("accessHint").textContent = "Faça login para salvar.";
       $("adminPanel").classList.add("hidden");
-      DB = [];
-      refreshUI();
+      DB=[]; EVENTS=[];
+      refreshUI(); refreshScreeningUI();
       return;
     }
 
@@ -542,8 +761,8 @@
       $("roleChip").textContent = "Aguardando liberação";
       $("accessHint").textContent = "Seu acesso não está ativo (admin precisa liberar).";
       $("adminPanel").classList.add("hidden");
-      DB = [];
-      refreshUI();
+      DB=[]; EVENTS=[];
+      refreshUI(); refreshScreeningUI();
       toast("Acesso não liberado ainda.", true);
       return;
     }
@@ -552,14 +771,14 @@
     $("accessHint").textContent = (CURRENT_ROLE === "admin")
       ? "Admin: pode criar/editar/excluir"
       : "Assistente: pode criar/editar (não exclui)";
-
     $("adminPanel").classList.toggle("hidden", CURRENT_ROLE !== "admin");
 
-    unsubscribe = startRealtime();
+    unsubPatients = startRealtimePatients();
+    unsubEvents = startRealtimeEventsForCalendar();
     toast("Conectado (online)!");
   });
 
-  // ======= Form =======
+  // ======= Recrutamento: Form =======
   function validate(){
     const req = ["nome","status","estudo","data"];
     for(const id of req){
@@ -613,7 +832,6 @@
       resetForm();
       toast("Salvo!");
     }catch(e){
-      console.error(e);
       toast("Falha ao salvar: " + (e?.message||e), true);
     }
   }
@@ -665,8 +883,8 @@
     $("motivoNaoElegivel").disabled = !isNo;
     $("outroMotivo").disabled = !isNo;
 
-    const knownMot = ["Progressão","Perda de follow-up","Recusa do paciente","Outro"];
     if(isNo){
+      const knownMot = ["Progressão","Perda de follow-up","Recusa do paciente","Outro"];
       if(p.motivoNaoElegivel && knownMot.includes(p.motivoNaoElegivel)){
         $("motivoNaoElegivel").value = p.motivoNaoElegivel;
         $("outroMotivo").value = "";
@@ -686,7 +904,7 @@
     $("cancelBtn").classList.remove("hidden");
   }
 
-  async function remove(id){
+  async function removePatient(id){
     if(!CURRENT_USER || !IS_ACTIVE) return toast("Sem acesso.", true);
     if(CURRENT_ROLE !== "admin") return toast("Assistente não pode excluir.", true);
     if(!confirm("Excluir este registro?")) return;
@@ -702,7 +920,7 @@
   $("saveBtn").addEventListener("click", save);
   $("cancelBtn").addEventListener("click", () => { resetForm(); toast("Edição cancelada"); });
 
-  // ======= Dataset / filtros =======
+  // ======= Recrutamento: Dataset/Filtros =======
   function dataset(){
     const q = ($("search").value || "").toLowerCase();
     const selMonth = parseMonth($("monthFilter").value);
@@ -725,10 +943,50 @@
   }
 
   function updateKPIs(list){
-    $("kpiTotal").textContent = list.length;
-    $("kpiElig").textContent = list.filter(x=>x.elegivel==="Sim").length;
-    $("kpiNaoElig").textContent = list.filter(x=>x.elegivel==="Não").length;
-    $("kpiTCLE").textContent = list.filter(x=>x.tcleAssinado==="Sim").length;
+    const total = list.length;
+    const elig = list.filter(x=>x.elegivel==="Sim").length;
+    const nao = list.filter(x=>x.elegivel==="Não").length;
+    const tcle = list.filter(x=>x.tcleAssinado==="Sim").length;
+    const enc = list.filter(x=>(x.encaminhador||"").trim().length>0).length;
+    const rand = list.filter(x=>x.status==="Randomizado").length;
+    const fail = list.filter(x=>x.status==="Falha de screening").length;
+    const conv = elig ? Math.round((rand/elig)*100) : 0;
+
+    $("kpiTotal").textContent = total;
+    $("kpiElig").textContent = elig;
+    $("kpiNaoElig").textContent = nao;
+    $("kpiTCLE").textContent = tcle;
+    $("kpiEnc").textContent = enc;
+    $("kpiRand").textContent = rand;
+    $("kpiFail").textContent = fail;
+    $("kpiConv").textContent = `${conv}%`;
+  }
+
+  function updateChart(list){
+    // gráfico com TODOS os indicadores que você citou
+    const total = list.length;
+    const elig = list.filter(x=>x.elegivel==="Sim").length;
+    const nao = list.filter(x=>x.elegivel==="Não").length;
+    const tcle = list.filter(x=>x.tcleAssinado==="Sim").length;
+    const enc = list.filter(x=>(x.encaminhador||"").trim().length>0).length;
+    const rand = list.filter(x=>x.status==="Randomizado").length;
+    const fail = list.filter(x=>x.status==="Falha de screening").length;
+
+    const labels = ["Total","Elegíveis","Não elegíveis","TCLE assinado","Encaminhadores","Randomizados","Falha de screening"];
+    const data = [total, elig, nao, tcle, enc, rand, fail];
+
+    const ctx = $("statusChart").getContext("2d");
+    if(CHART) CHART.destroy();
+    CHART = new Chart(ctx, {
+      type:"bar",
+      data:{ labels, datasets:[{ data }] },
+      options:{
+        plugins:{ legend:{ display:false } },
+        scales:{
+          y:{ beginAtZero:true, ticks:{ precision:0 } }
+        }
+      }
+    });
   }
 
   function renderTable(){
@@ -765,7 +1023,6 @@
     updateKPIs(list);
     updateChart(list);
 
-    // bind buttons
     document.querySelectorAll("[data-edit]").forEach(b=>{
       b.onclick = () => {
         const id = b.getAttribute("data-edit");
@@ -774,30 +1031,11 @@
       };
     });
     document.querySelectorAll("[data-del]").forEach(b=>{
-      b.onclick = () => remove(b.getAttribute("data-del"));
+      b.onclick = () => removePatient(b.getAttribute("data-del"));
     });
   }
 
-  function updateChart(list){
-    const counts = {};
-    for(const p of list){
-      const k = p.status || "Sem status";
-      counts[k] = (counts[k]||0)+1;
-    }
-    const labels = Object.keys(counts);
-    const data = Object.values(counts);
-
-    const ctx = $("statusChart").getContext("2d");
-    if(CHART) CHART.destroy();
-    CHART = new Chart(ctx, {
-      type:"pie",
-      data:{ labels, datasets:[{ data }] }
-    });
-  }
-
-  function refreshUI(){
-    renderTable();
-  }
+  function refreshUI(){ renderTable(); }
 
   ["search","monthFilter","statusFilter"].forEach(id=>{
     $(id).addEventListener("input", refreshUI);
@@ -809,10 +1047,10 @@
     refreshUI();
   });
 
-  // ======= CSV Export =======
+  // ======= Export CSV =======
   $("exportBtn").addEventListener("click", ()=>{
     const rows = dataset();
-    const header = ["id","nome","status","estudo","data","encaminhador","tcleAgendado","tcleAssinado","elegivel","motivoNaoElegivel","obs","updatedBy"];
+    const header = ["id","nome","status","estudo","data","encaminhador","tcleAgendado","tcleAssinado","elegivel","motivoNaoElegivel","obs"];
     const csv = [
       header.join(","),
       ...rows.map(r => header.map(h => `"${String(r[h] ?? "").replaceAll('"','""')}"`).join(","))
@@ -827,23 +1065,354 @@
     URL.revokeObjectURL(url);
   });
 
-  // ======= Admin Panel (opcional) =======
-  // IMPORTANTE: criar usuário pelo front-end exige uma abordagem segura.
-  // Aqui eu deixei o UI pronto, mas a criação REAL (recomendada) deve ser via Cloud Function/Admin SDK.
-  // Para não travar seu fluxo, abaixo deixo o método manual oficial (console) e você pode ignorar esse botão.
-  $("adminCreateBtn").addEventListener("click", async ()=>{
-    toast("Para criação segura de usuários, use o console (Authentication). Posso te passar a Cloud Function se você quiser.", true);
+  // ======= Export PDF (bonito) =======
+  $("exportPdfBtn").addEventListener("click", ()=>{
+    const rows = dataset();
+    const { jsPDF } = window.jspdf;
+    const docPdf = new jsPDF({ orientation:"landscape", unit:"pt", format:"a4" });
+
+    const today = new Date();
+    const title = "IEP Recrutamento — Indicadores";
+    docPdf.setFont("helvetica","bold");
+    docPdf.setFontSize(16);
+    docPdf.text(title, 40, 40);
+
+    docPdf.setFont("helvetica","normal");
+    docPdf.setFontSize(10);
+    docPdf.text(`Gerado em: ${today.toLocaleString("pt-BR")}`, 40, 60);
+
+    // KPIs
+    const total = rows.length;
+    const elig = rows.filter(x=>x.elegivel==="Sim").length;
+    const nao = rows.filter(x=>x.elegivel==="Não").length;
+    const tcle = rows.filter(x=>x.tcleAssinado==="Sim").length;
+    const enc = rows.filter(x=>(x.encaminhador||"").trim().length>0).length;
+    const rand = rows.filter(x=>x.status==="Randomizado").length;
+    const fail = rows.filter(x=>x.status==="Falha de screening").length;
+    const conv = elig ? Math.round((rand/elig)*100) : 0;
+
+    docPdf.setFont("helvetica","bold");
+    docPdf.setFontSize(11);
+    docPdf.text(`Total: ${total}  |  Elegíveis: ${elig}  |  Não elegíveis: ${nao}  |  TCLE assinado: ${tcle}  |  Encaminhadores: ${enc}  |  Randomizados: ${rand}  |  Falha: ${fail}  |  Conversão: ${conv}%`, 40, 85);
+
+    // Gráfico
+    const canvas = document.getElementById("statusChart");
+    try{
+      const img = canvas.toDataURL("image/png", 1.0);
+      docPdf.addImage(img, "PNG", 40, 100, 520, 210);
+    }catch{}
+
+    // Resumo por estudo (número e por estudo)
+    const byStudy = {};
+    for(const r of rows){
+      const s = (r.estudo||"Sem estudo").trim();
+      if(!byStudy[s]) byStudy[s] = { total:0, elig:0, rand:0, fail:0 };
+      byStudy[s].total++;
+      if(r.elegivel==="Sim") byStudy[s].elig++;
+      if(r.status==="Randomizado") byStudy[s].rand++;
+      if(r.status==="Falha de screening") byStudy[s].fail++;
+    }
+    const studyTable = Object.entries(byStudy).map(([study, v]) => ([
+      study, v.total, v.elig, v.rand, v.fail, (v.elig? Math.round((v.rand/v.elig)*100):0) + "%"
+    ]));
+
+    docPdf.setFont("helvetica","bold");
+    docPdf.setFontSize(12);
+    docPdf.text("Resumo por estudo", 580, 120);
+
+    docPdf.autoTable({
+      startY: 135,
+      margin: { left: 580, right: 40 },
+      head: [["Estudo","Total","Elegíveis","Rand.","Falha","Conv."]],
+      body: studyTable,
+      styles: { fontSize: 9, cellPadding: 4 },
+      headStyles: { fillColor: [16,19,27] }
+    });
+
+    // Página 2: Individual por paciente (visão atual)
+    docPdf.addPage("a4","landscape");
+    docPdf.setFont("helvetica","bold");
+    docPdf.setFontSize(14);
+    docPdf.text("Pacientes — visão atual", 40, 40);
+
+    const body = rows.map(r => ([
+      r.nome||"",
+      r.status||"",
+      r.estudo||"",
+      r.encaminhador||"",
+      r.elegivel||"",
+      r.motivoNaoElegivel||"",
+      r.data||"",
+      r.tcleAssinado||"",
+      (r.obs||"").slice(0,80)
+    ]));
+
+    docPdf.autoTable({
+      startY: 60,
+      margin: { left: 40, right: 40 },
+      head: [["Nome","Status","Estudo","Enc.","Elegível","Motivo","Data","TCLE","Obs"]],
+      body,
+      styles: { fontSize: 8, cellPadding: 3 },
+      headStyles: { fillColor: [16,19,27] }
+    });
+
+    docPdf.save("IEP_Indicadores.pdf");
   });
 
-  // ======= Init =======
-  // Ajustes iniciais do formulário
-  toggleOutroEnc();
-  toggleOutroMotivo();
+  // ======= Screening: Calendar UI =======
+  function ensureDows(){
+    const el = $("calDows");
+    if(el.children.length) return;
+    for(const d of DOWS){
+      const x = document.createElement("div");
+      x.className = "calDow";
+      x.textContent = d;
+      el.appendChild(x);
+    }
+  }
+
+  function renderCalendar(){
+    ensureDows();
+
+    const monthName = calBase.toLocaleString("pt-BR",{ month:"long", year:"numeric" });
+    $("calTitle").textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+    const grid = $("calGrid");
+    grid.innerHTML = "";
+
+    const firstDay = new Date(calBase);
+    const startDow = firstDay.getDay();
+
+    const daysInMonth = new Date(calBase.getFullYear(), calBase.getMonth()+1, 0).getDate();
+
+    // blanks
+    for(let i=0;i<startDow;i++){
+      const blank = document.createElement("div");
+      blank.className="calDay";
+      blank.style.opacity = ".18";
+      blank.style.cursor = "default";
+      blank.innerHTML = "<div class='n'> </div>";
+      grid.appendChild(blank);
+    }
+
+    const todayISO = iso(new Date());
+    const map = {};
+    for(const e of EVENTS){
+      map[e.date] = map[e.date] || [];
+      map[e.date].push(e);
+    }
+
+    for(let d=1; d<=daysInMonth; d++){
+      const dt = new Date(calBase.getFullYear(), calBase.getMonth(), d);
+      const dtISO = iso(dt);
+
+      const box = document.createElement("div");
+      box.className = "calDay";
+      if(dtISO === todayISO) box.classList.add("today");
+      if(map[dtISO] && map[dtISO].length) box.classList.add("has");
+
+      box.innerHTML = `<div class="n">${d}</div>`;
+      if(map[dtISO] && map[dtISO].length){
+        const first = map[dtISO][0];
+        const label = `${first.title || first.type || "Procedimento"} • ${first.patientName || ""}`.trim();
+        const pill = document.createElement("div");
+        pill.className="pill";
+        pill.textContent = map[dtISO].length>1 ? `${label} +${map[dtISO].length-1}` : label;
+        box.appendChild(pill);
+      }
+
+      box.onclick = () => {
+        pickedDateISO = dtISO;
+        $("pickedDayLabel").textContent = `Dia selecionado: ${dt.toLocaleDateString("pt-BR")}`;
+      };
+
+      grid.appendChild(box);
+    }
+  }
+
+  function fillPatientsDropdown(){
+    const sel = $("scrPatient");
+    sel.innerHTML = "";
+    const opt0 = document.createElement("option");
+    opt0.value = "";
+    opt0.textContent = "Selecione";
+    sel.appendChild(opt0);
+
+    const list = [...DB].sort((a,b)=>(a.nome||"").localeCompare(b.nome||""));
+    for(const p of list){
+      const o = document.createElement("option");
+      o.value = p.id;
+      o.textContent = `${p.nome || p.id} — ${p.estudo || ""}`.trim();
+      sel.appendChild(o);
+    }
+  }
+
+  function listEventsOfCurrentMonth(){
+    const from = iso(startOfMonth(calBase));
+    const to = iso(endOfMonth(calBase));
+    const monthEvents = EVENTS.filter(e => (e.date||"") >= from && (e.date||"") <= to);
+
+    const tbody = $("scrTableBody");
+    tbody.innerHTML = "";
+
+    for(const e of monthEvents){
+      const canDel = (CURRENT_ROLE === "admin");
+      tbody.insertAdjacentHTML("beforeend", `
+        <tr>
+          <td class="nowrap">${esc(e.date)} ${esc(e.time||"")}</td>
+          <td>${esc(e.patientName||"")}</td>
+          <td>${esc(e.type||"")}</td>
+          <td>${esc(e.title||"")}</td>
+          <td>${esc(e.notes||"")}</td>
+          <td class="nowrap">
+            ${canDel ? `<button class="danger" data-evdel="${esc(e.id)}">🗑️</button>` : `<span class="small muted">—</span>`}
+          </td>
+        </tr>
+      `);
+    }
+
+    $("scrEmptyMsg").textContent = monthEvents.length ? "" : "Sem procedimentos no mês.";
+    document.querySelectorAll("[data-evdel]").forEach(b=>{
+      b.onclick = () => deleteEvent(b.getAttribute("data-evdel"));
+    });
+  }
+
+  function resetScrForm(){
+    $("scrPatient").value = "";
+    $("scrType").value = "";
+    $("scrTime").value = "";
+    $("scrTitle").value = "";
+    $("scrNotes").value = "";
+  }
+  $("scrClearBtn").onclick = resetScrForm;
+
+  async function saveEvent(){
+    if(!CURRENT_USER || !IS_ACTIVE) return toast("Sem acesso. Faça login.", true);
+    if(!pickedDateISO) return toast("Selecione um dia no calendário.", true);
+
+    const patientId = $("scrPatient").value;
+    const type = $("scrType").value;
+    const time = $("scrTime").value;
+    const title = $("scrTitle").value.trim();
+    const notes = $("scrNotes").value.trim();
+
+    if(!patientId || !type || !title) return toast("Preencha Paciente, Tipo e Descrição.", true);
+
+    const p = DB.find(x=>x.id===patientId);
+    const ev = {
+      id: uidEv(),
+      date: pickedDateISO,
+      time: time || "",
+      patientId,
+      patientName: p?.nome || patientId,
+      type,
+      title,
+      notes,
+      createdAt: serverTimestamp(),
+      createdBy: CURRENT_USER.uid,
+      updatedAt: serverTimestamp(),
+      updatedBy: CURRENT_USER.uid
+    };
+
+    try{
+      await setDoc(doc(db,"screening_events",ev.id), ev, {merge:true});
+
+      // atualiza o paciente automaticamente (campo-resumo)
+      await setDoc(doc(db,"patients",patientId), {
+        screeningLastUpdate: serverTimestamp(),
+        screeningLastEventDate: pickedDateISO,
+        screeningLastEventTitle: title
+      }, {merge:true});
+
+      resetScrForm();
+      toast("Procedimento salvo!");
+    }catch(e){
+      toast("Erro ao salvar procedimento: " + (e?.message||e), true);
+    }
+  }
+  $("scrSaveBtn").onclick = saveEvent;
+
+  async function deleteEvent(id){
+    if(CURRENT_ROLE !== "admin") return toast("Somente admin pode excluir.", true);
+    if(!confirm("Excluir este procedimento?")) return;
+    try{
+      await deleteDoc(doc(db,"screening_events",id));
+      toast("Procedimento excluído.");
+    }catch(e){
+      toast("Erro ao excluir: " + (e?.message||e), true);
+    }
+  }
+
+  function buildAlerts(){
+    const box = $("alertsBox");
+    box.innerHTML = "";
+
+    const today = new Date();
+    const t0 = iso(today);
+    const t1 = iso(new Date(today.getFullYear(), today.getMonth(), today.getDate()+1));
+
+    const due = EVENTS.filter(e => e.date===t0 || e.date===t1)
+                      .sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+
+    if(!due.length){
+      box.innerHTML = `<div class="mini"><b>Nenhum alerta</b><div class="small muted">Sem procedimentos para hoje/amanhã.</div></div>`;
+      return;
+    }
+
+    for(const e of due){
+      const when = e.date===t0 ? "HOJE" : "AMANHÃ";
+      const line = `${when} • ${e.date} ${e.time||""} — ${e.title||e.type} — ${e.patientName||""}`;
+      const card = document.createElement("div");
+       card.className = "mini";
+      card.innerHTML = `<b>${esc(e.title || e.type || "Procedimento")}</b>
+        <div class="small muted">${esc(line)}</div>`;
+      box.appendChild(card);
+    }
+
+    // Notificação do navegador (1x por sessão) – simples e segura
+    try{
+      const key = "iep_notified_" + t0;
+      if(!sessionStorage.getItem(key)){
+        const todayEvents = due.filter(e=>e.date===t0);
+        if(todayEvents.length){
+          pushBrowserNotification("IEP Screening — HOJE", `${todayEvents.length} procedimento(s) hoje.`);
+        }
+        sessionStorage.setItem(key, "1");
+      }
+    }catch{}
+  }
+
+  function refreshScreeningUI(){
+    fillPatientsDropdown();
+    renderCalendar();
+    listEventsOfCurrentMonth();
+    buildAlerts();
+  }
+
+  $("prevMonthBtn").onclick = ()=>{
+    calBase = addMonths(calBase, -1);
+    // re-subscrever eventos (mês atual + próximo)
+    if(unsubEvents){ unsubEvents(); unsubEvents = startRealtimeEventsForCalendar(); }
+    refreshScreeningUI();
+  };
+  $("nextMonthBtn").onclick = ()=>{
+    calBase = addMonths(calBase, 1);
+    if(unsubEvents){ unsubEvents(); unsubEvents = startRealtimeEventsForCalendar(); }
+    refreshScreeningUI();
+  };
+
+  // ======= Admin: criar usuário (orientação + atalho) =======
+  // Aqui deixo só um alerta (mais seguro). Você cria no Firebase Console > Authentication.
+  // Depois libera o UID em Firestore > users/{uid}.
+  // Se você quiser, depois eu te passo a versão com Cloud Function (admin cria pelo painel).
+  // -----------------------------------
+  // Ajuste inicial
   $("motivoNaoElegivel").disabled = true;
   $("outroMotivo").disabled = true;
-
-  // Primeira render (sem dados)
+  toggleOutroEnc();
+  toggleOutroMotivo();
   refreshUI();
+  refreshScreeningUI();
 </script>
 
 </body>
