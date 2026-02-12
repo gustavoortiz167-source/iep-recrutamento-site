@@ -1,395 +1,582 @@
 <!doctype html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>IEP Recrutamento — Online</title>
   <style>
-    body { font-family: system-ui, Arial; margin: 0; padding: 18px; background:#0b1220; color:#e6eefc; }
-    .row { display:flex; gap:12px; flex-wrap:wrap; }
-    .card { background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:14px; }
-    .w50 { flex:1; min-width:320px; }
-    input, select, button { padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:rgba(0,0,0,.25); color:#fff; }
-    button { cursor:pointer; }
-    button.primary { background:#2a67ff; border-color:#2a67ff; }
-    button.link { background:transparent; border:none; text-decoration:underline; opacity:.9; }
-    .muted { opacity:.75; font-size: 13px; }
-    .tabs button { margin-right: 8px; }
-    .hidden { display:none; }
-    .grid { display:grid; grid-template-columns: repeat(7, minmax(42px,1fr)); gap:8px; }
-    .day { aspect-ratio: 1/1; border-radius:12px; border:1px solid rgba(255,255,255,.14); display:flex; align-items:flex-start; justify-content:flex-start; padding:10px; cursor:pointer; background: rgba(0,0,0,.18); }
-    .day:hover { outline: 2px solid rgba(42,103,255,.4); }
-    .day.selected { outline: 2px solid #2a67ff; }
-    .toast { position: fixed; right: 14px; top: 14px; z-index: 99; padding: 12px 14px; border-radius: 12px; max-width: 420px; }
-    .toast.ok { background: rgba(34,197,94,.18); border:1px solid rgba(34,197,94,.4); }
-    .toast.err{ background: rgba(239,68,68,.18); border:1px solid rgba(239,68,68,.4); }
-    .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-    .pill { padding: 8px 10px; border-radius: 999px; border:1px solid rgba(255,255,255,.14); background: rgba(0,0,0,.18); }
+    :root{
+      --bg:#0b0f19;
+      --card:#10182a;
+      --muted:#9aa4b2;
+      --text:#e7eefc;
+      --border:rgba(255,255,255,.10);
+      --accent:#5aa7ff;
+      --good:#36d399;
+      --bad:#fb7185;
+      --warn:#fbbf24;
+    }
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial;}
+    body{margin:0;background:linear-gradient(180deg,#070a12 0%,#0b0f19 100%);color:var(--text);}
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:22px;}
+    .topbar{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:18px;}
+    .brand{display:flex;flex-direction:column;gap:2px}
+    .brand h1{margin:0;font-size:20px;letter-spacing:.2px}
+    .brand small{color:var(--muted)}
+    .statusrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:rgba(255,255,255,.03);color:var(--muted);font-size:12px}
+    .pill strong{color:var(--text)}
+    .btn{appearance:none;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:600}
+    .btn:hover{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.06)}
+    .btn.primary{border-color:rgba(90,167,255,.55);background:rgba(90,167,255,.12)}
+    .btn.primary:hover{background:rgba(90,167,255,.18)}
+    .btn.danger{border-color:rgba(251,113,133,.55);background:rgba(251,113,133,.10)}
+    .btn.danger:hover{background:rgba(251,113,133,.14)}
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+    @media(max-width:920px){.grid{grid-template-columns:1fr}}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.03) 0%,rgba(255,255,255,.02) 100%);border:1px solid var(--border);border-radius:18px;padding:16px}
+    .tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+    .tab{padding:10px 12px;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.03);cursor:pointer;font-weight:700}
+    .tab.active{border-color:rgba(90,167,255,.55);background:rgba(90,167,255,.10)}
+    .muted{color:var(--muted)}
+    .h2{margin:0 0 8px;font-size:16px}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .input{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.18);color:var(--text);outline:none}
+    .input:focus{border-color:rgba(90,167,255,.6)}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media(max-width:560px){.two{grid-template-columns:1fr}}
+    .loginBox{display:grid;gap:10px}
+    .help{font-size:12px;color:var(--muted)}
+    .divider{height:1px;background:var(--border);margin:12px 0}
+    .toast{
+      position:fixed;left:50%;transform:translateX(-50%);
+      bottom:22px;z-index:9999;
+      min-width:320px;max-width:min(920px,calc(100vw - 30px));
+      display:none;gap:10px;align-items:flex-start;
+      background:rgba(16,24,42,.92);border:1px solid var(--border);
+      padding:12px 14px;border-radius:16px;backdrop-filter:blur(12px);
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    .toast.show{display:flex}
+    .dot{width:10px;height:10px;border-radius:50%;margin-top:4px}
+    .dot.good{background:var(--good)}
+    .dot.bad{background:var(--bad)}
+    .dot.warn{background:var(--warn)}
+    .toast b{display:block;margin-bottom:2px}
+    .calendarHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+    .calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+    .dow{font-size:12px;color:var(--muted);text-align:center;padding:6px 0}
+    .day{
+      border:1px solid var(--border);border-radius:14px;
+      background:rgba(255,255,255,.02);padding:10px 10px;
+      min-height:64px;cursor:pointer;position:relative;
+      display:flex;flex-direction:column;gap:6px;
+    }
+    .day:hover{border-color:rgba(255,255,255,.18)}
+    .day.disabled{opacity:.35;cursor:default}
+    .day.selected{border-color:rgba(90,167,255,.7);background:rgba(90,167,255,.10)}
+    .num{font-weight:800}
+    .badges{display:flex;gap:6px;flex-wrap:wrap}
+    .badge{
+      font-size:11px;padding:3px 8px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);color:var(--muted);
+    }
+    .badge.has{border-color:rgba(54,211,153,.35);background:rgba(54,211,153,.10);color:#bff7df}
+    .formRow{display:grid;gap:10px;margin-top:10px}
+    .rightStack{display:grid;gap:12px}
+    .smallTitle{font-size:13px;font-weight:800;margin:0 0 6px}
+    .note{font-size:12px;color:var(--muted);line-height:1.45}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
   </style>
 </head>
 
 <body>
-  <div id="toast" class="toast hidden"></div>
-
-  <div class="topbar card">
-    <div>
-      <div style="font-size:18px;font-weight:700;">IEP Recrutamento — Online</div>
-      <div class="muted">Firestore + Auth (Email/Senha) • Admin/Assistente • Realtime</div>
-    </div>
-
-    <div class="row" style="align-items:center;">
-      <div id="authPill" class="pill">Não autenticado</div>
-      <button id="btnLogout" class="hidden">Sair</button>
-    </div>
-  </div>
-
-  <div class="row" style="margin-top:14px;">
-    <!-- LOGIN -->
-    <div class="card w50" id="loginCard">
-      <div style="font-weight:700;margin-bottom:10px;">Login</div>
-      <div class="row">
-        <input id="email" type="email" placeholder="seu@email.com" style="flex:1; min-width:260px;" />
-        <input id="password" type="password" placeholder="********" style="flex:1; min-width:200px;" />
-        <button id="btnLogin" class="primary">Entrar</button>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <h1>IEP Recrutamento — Online</h1>
+        <small class="muted">Firestore + Auth (Email/Senha) • Admin/Assistente • Realtime</small>
       </div>
-      <div style="margin-top:10px;">
-        <button id="btnForgot" class="link" type="button">Esqueci minha senha</button>
-        <div class="muted" style="margin-top:6px;">
-          Dica: se der “muitas tentativas”, use “Esqueci minha senha” para destravar.
+
+      <div class="statusrow">
+        <div class="pill" id="authPill">Status: <strong id="authStatus">Carregando...</strong></div>
+        <button class="btn danger" id="logoutBtn" style="display:none">Sair</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="tabs">
+          <button class="tab active" id="tabRecruit">Recrutamento</button>
+          <button class="tab" id="tabScreen">Screening — Calendário</button>
         </div>
-      </div>
-    </div>
 
-    <!-- ABAS -->
-    <div class="card w50">
-      <div class="tabs" style="margin-bottom:10px;">
-        <button id="tabRecruit" class="primary">Recrutamento</button>
-        <button id="tabScreening">Screening</button>
-      </div>
+        <section id="recruitSection">
+          <h2 class="h2">Recrutamento</h2>
+          <p class="muted" style="margin:0 0 10px">Aqui você mantém sua tela atual (cadastro, indicadores, etc.).</p>
+          <div class="divider"></div>
+          <p class="muted" style="margin:0">
+            (Área reservada para seu conteúdo atual. O login/Firestore continuam funcionando neste mesmo arquivo.)
+          </p>
+        </section>
 
-      <!-- RECRUTAMENTO (placeholder apenas para manter seu layout) -->
-      <div id="recruitView">
-        <div style="font-weight:700;">Recrutamento</div>
-        <div class="muted">Aqui você mantém sua tela atual (cadastro, indicadores, etc.).</div>
-      </div>
+        <section id="screenSection" style="display:none">
+          <h2 class="h2">Screening — Calendário</h2>
 
-      <!-- SCREENING -->
-      <div id="screeningView" class="hidden">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-          <div style="font-weight:700;">Screening — Calendário</div>
+          <div class="calendarHead">
+            <button class="btn" id="prevMonth">◀ Mês</button>
+            <div class="pill"><strong id="monthLabel">—</strong></div>
+            <button class="btn" id="nextMonth">Mês ▶</button>
+          </div>
+
+          <div class="calGrid" id="dowRow"></div>
+          <div class="calGrid" id="cal"></div>
+
+          <p class="help" style="margin:10px 0 0">
+            Clique em um dia para selecionar e depois salve o procedimento. <span class="muted">(Funciona somente logado)</span>
+          </p>
+
+          <div class="divider"></div>
+
+          <h3 class="h2" style="margin-top:0">Novo procedimento</h3>
           <div class="row">
-            <button id="btnPrevMonth">◀ Mês</button>
-            <div id="monthLabel" class="pill">—</div>
-            <button id="btnNextMonth">Mês ▶</button>
+            <div class="pill">Dia selecionado: <strong id="selectedDayLabel">—</strong></div>
           </div>
-        </div>
 
-        <div class="muted" style="margin:10px 0;">
-          Clique em um dia para selecionar e depois salve o procedimento. (Funciona somente logado)
-        </div>
-
-        <div class="grid" id="screeningCalendar"></div>
-
-        <div class="card" style="margin-top:12px;">
-          <div style="font-weight:700;">Novo procedimento</div>
-          <div class="muted" id="selectedDayLabel" style="margin:6px 0 10px;">Dia selecionado: —</div>
-
-          <form id="procForm" class="row" style="align-items:center;">
-            <input id="procPatient" placeholder="ID / Nome do paciente" style="flex:1; min-width:220px;" />
-            <select id="procType" style="min-width:200px;">
-              <option value="">Tipo</option>
-              <option>TCLE agendado</option>
-              <option>TCLE assinado</option>
-              <option>Exames laboratoriais</option>
-              <option>Exames de imagem</option>
-              <option>Consulta / Avaliação</option>
-              <option>Falha de screening</option>
-              <option>Randomizado</option>
-              <option>Outro</option>
+          <div class="formRow">
+            <label class="smallTitle" for="procType" style="margin:0">Tipo</label>
+            <select class="input" id="procType">
+              <option value="TCLE agendado">TCLE agendado</option>
+              <option value="TCLE assinado">TCLE assinado</option>
+              <option value="Exames laboratoriais">Exames laboratoriais</option>
+              <option value="Exames de imagem">Exames de imagem</option>
+              <option value="Consulta / Avaliação">Consulta / Avaliação</option>
+              <option value="Falha de screening">Falha de screening</option>
+              <option value="Randomizado">Randomizado</option>
+              <option value="Outro">Outro</option>
             </select>
-            <input id="procTime" placeholder="Hora (opcional) ex: 14:30" style="min-width:180px;" />
-            <button id="btnSaveProcedure" class="primary" type="submit">Salvar procedimento</button>
-          </form>
 
-          <div class="muted" style="margin-top:10px;">
+            <button class="btn primary" id="saveProcBtn">Salvar procedimento</button>
+          </div>
+
+          <p class="note" style="margin:10px 0 0">
             Se algo bloquear o salvamento, vai aparecer um erro detalhado no toast e no Console.
+          </p>
+        </section>
+      </div>
+
+      <div class="rightStack">
+        <div class="card">
+          <h2 class="h2">Login</h2>
+          <div class="loginBox">
+            <input class="input" id="email" type="email" autocomplete="username" placeholder="Email" />
+            <input class="input" id="password" type="password" autocomplete="current-password" placeholder="Senha" />
+            <button class="btn primary" id="loginBtn">Entrar</button>
+            <button class="btn" id="resetBtn">Esqueci minha senha</button>
+            <div class="help">
+              Dica: se der “muitas tentativas”, use “Esqueci minha senha” para destravar.
+            </div>
           </div>
         </div>
 
+        <div class="card">
+          <p class="smallTitle">Debug</p>
+          <div class="note">
+            <div>Projeto: <span class="mono" id="dbgProject">—</span></div>
+            <div>AuthDomain: <span class="mono" id="dbgAuthDomain">—</span></div>
+            <div>Usuário: <span class="mono" id="dbgUser">—</span></div>
+            <div>Role: <span class="mono" id="dbgRole">—</span></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Firebase + App -->
-  <script type="module">
-    // =========================
-    // 1) Firebase imports
-    // =========================
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  <div class="toast" id="toast">
+    <div class="dot" id="toastDot"></div>
+    <div>
+      <b id="toastTitle">—</b>
+      <div id="toastMsg" class="note" style="margin:0"></div>
+    </div>
+  </div>
 
+  <script type="module">
+    // ==========================================================
+    // 1) COLE AQUI O firebaseConfig REAL (substitui "COLE_AQUI")
+    //    Isso corrige o erro: FirebaseError: auth/api-key-not-valid
+    // ==========================================================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import {
       getAuth,
-      setPersistence,
-      browserLocalPersistence,
-      browserSessionPersistence,
-      inMemoryPersistence,
+      onAuthStateChanged,
       signInWithEmailAndPassword,
       sendPasswordResetEmail,
-      onAuthStateChanged,
       signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import {
       getFirestore,
-      collection,
+      doc,
+      getDoc,
+      setDoc,
       addDoc,
-      serverTimestamp,
-      Timestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      collection,
+      query,
+      where,
+      onSnapshot,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // =========================
-    // 2) COLE AQUI seu firebaseConfig
-    // =========================
     const firebaseConfig = {
-      apiKey: "COLE_AQUI",
-      authDomain: "COLE_AQUI",
-      projectId: "COLE_AQUI",
-      storageBucket: "COLE_AQUI",
-      messagingSenderId: "COLE_AQUI",
-      appId: "COLE_AQUI"
+      apiKey: "COLE_AQUI_SUA_API_KEY_REAL",
+      authDomain: "COLE_AQUI_SEU_AUTH_DOMAIN_REAL",
+      projectId: "COLE_AQUI_SEU_PROJECT_ID_REAL",
+      storageBucket: "COLE_AQUI_SEU_STORAGE_BUCKET_REAL",
+      messagingSenderId: "COLE_AQUI_SEU_MESSAGING_SENDER_ID_REAL",
+      appId: "COLE_AQUI_SEU_APP_ID_REAL"
     };
+
+    // Proteção contra erro de config placeholder
+    if (!firebaseConfig.apiKey || firebaseConfig.apiKey.includes("COLE_AQUI")) {
+      console.error("Firebase apiKey inválida/placeholder. Cole o firebaseConfig real do Firebase Console.");
+    }
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // =========================
-    // 3) Toast
-    // =========================
-    function toast(msg, type="ok") {
-      const el = document.getElementById("toast");
-      el.className = "toast " + type;
-      el.textContent = msg;
-      el.classList.remove("hidden");
-      setTimeout(() => el.classList.add("hidden"), 5200);
+    // UI refs
+    const $ = (id) => document.getElementById(id);
+
+    const tabRecruit = $("tabRecruit");
+    const tabScreen  = $("tabScreen");
+    const recruitSection = $("recruitSection");
+    const screenSection  = $("screenSection");
+
+    const authStatus = $("authStatus");
+    const logoutBtn  = $("logoutBtn");
+
+    const emailEl = $("email");
+    const passEl  = $("password");
+    const loginBtn = $("loginBtn");
+    const resetBtn = $("resetBtn");
+
+    const dbgProject = $("dbgProject");
+    const dbgAuthDomain = $("dbgAuthDomain");
+    const dbgUser = $("dbgUser");
+    const dbgRole = $("dbgRole");
+
+    const toast = $("toast");
+    const toastDot = $("toastDot");
+    const toastTitle = $("toastTitle");
+    const toastMsg = $("toastMsg");
+
+    const monthLabel = $("monthLabel");
+    const prevMonth = $("prevMonth");
+    const nextMonth = $("nextMonth");
+    const cal = $("cal");
+    const dowRow = $("dowRow");
+
+    const selectedDayLabel = $("selectedDayLabel");
+    const procType = $("procType");
+    const saveProcBtn = $("saveProcBtn");
+
+    // Toast
+    function showToast(kind, title, msg) {
+      toastDot.className = "dot " + (kind || "warn");
+      toastTitle.textContent = title || "Aviso";
+      toastMsg.textContent = msg || "";
+      toast.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toast.classList.remove("show"), 5200);
     }
 
-    // =========================
-    // 4) Auth persistence fallback (evita bugs em navegadores)
-    // =========================
-    (async () => {
+    function normalizeError(e) {
+      const raw = (e && (e.code || e.message || String(e))) || "Erro desconhecido";
+      return raw;
+    }
+
+    // Tabs
+    function setTab(which) {
+      const isRecruit = which === "recruit";
+      tabRecruit.classList.toggle("active", isRecruit);
+      tabScreen.classList.toggle("active", !isRecruit);
+      recruitSection.style.display = isRecruit ? "" : "none";
+      screenSection.style.display  = isRecruit ? "none" : "";
+    }
+    tabRecruit.addEventListener("click", () => setTab("recruit"));
+    tabScreen.addEventListener("click", () => setTab("screen"));
+
+    // Debug
+    dbgProject.textContent = firebaseConfig.projectId || "—";
+    dbgAuthDomain.textContent = firebaseConfig.authDomain || "—";
+
+    // Auth handlers
+    loginBtn.addEventListener("click", async () => {
       try {
-        await setPersistence(auth, browserLocalPersistence);
-        console.log("[AUTH] Persistence: local");
-      } catch (e1) {
-        try {
-          await setPersistence(auth, browserSessionPersistence);
-          console.log("[AUTH] Persistence: session");
-        } catch (e2) {
-          await setPersistence(auth, inMemoryPersistence);
-          console.log("[AUTH] Persistence: memory (storage bloqueado)");
+        const email = (emailEl.value || "").trim();
+        const password = passEl.value || "";
+        if (!email || !password) {
+          showToast("warn","Preencha os campos","Informe email e senha para entrar.");
+          return;
         }
-      }
-    })();
-
-    // =========================
-    // 5) Login + Forgot + Logout
-    // =========================
-    const emailEl = document.getElementById("email");
-    const passEl  = document.getElementById("password");
-    const btnLogin = document.getElementById("btnLogin");
-    const btnForgot = document.getElementById("btnForgot");
-    const btnLogout = document.getElementById("btnLogout");
-    const authPill = document.getElementById("authPill");
-
-    btnLogin.onclick = async () => {
-      const email = (emailEl.value || "").trim();
-      const pass  = passEl.value || "";
-      if (!email || !pass) return toast("Preencha e-mail e senha.", "err");
-
-      btnLogin.disabled = true;
-
-      try {
-        await signInWithEmailAndPassword(auth, email, pass);
-        toast("Login realizado!", "ok");
-      } catch (err) {
-        console.error("ERRO LOGIN:", err);
-
-        const msg = ({
-          "auth/too-many-requests": "Muitas tentativas. Aguarde alguns minutos ou clique em “Esqueci minha senha”.",
-          "auth/wrong-password": "Senha incorreta. Tente novamente ou clique em “Esqueci minha senha”.",
-          "auth/user-not-found": "Usuário não encontrado. Verifique o e-mail digitado.",
-          "auth/invalid-email": "E-mail inválido.",
-          "auth/invalid-credential": "Credencial inválida. Verifique e-mail/senha."
-        })[err.code] || ("Erro no login: " + (err.code || err.message));
-
-        toast(msg, "err");
-      } finally {
-        btnLogin.disabled = false;
-      }
-    };
-
-    btnForgot.onclick = async () => {
-      const email = (emailEl.value || "").trim();
-      if (!email) return toast("Digite seu e-mail para enviar o link de redefinição.", "err");
-
-      try {
-        await sendPasswordResetEmail(auth, email);
-        toast("Enviei um link de redefinição de senha para seu e-mail.", "ok");
-      } catch (err) {
-        console.error("RESET SENHA:", err);
-        toast("Erro ao enviar redefinição: " + (err.code || err.message), "err");
-      }
-    };
-
-    btnLogout.onclick = async () => {
-      try {
-        await signOut(auth);
-        toast("Você saiu.", "ok");
-      } catch (err) {
-        console.error(err);
-        toast("Erro ao sair: " + (err.code || err.message), "err");
-      }
-    };
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        authPill.textContent = user.email || "Autenticado";
-        btnLogout.classList.remove("hidden");
-      } else {
-        authPill.textContent = "Não autenticado";
-        btnLogout.classList.add("hidden");
+        await signInWithEmailAndPassword(auth, email, password);
+        showToast("good","Login OK","Você está autenticado.");
+      } catch (e) {
+        console.error(e);
+        showToast("bad","Erro no login", normalizeError(e));
       }
     });
 
-    // =========================
-    // 6) Tabs
-    // =========================
-    const tabRecruit = document.getElementById("tabRecruit");
-    const tabScreening = document.getElementById("tabScreening");
-    const recruitView = document.getElementById("recruitView");
-    const screeningView = document.getElementById("screeningView");
+    resetBtn.addEventListener("click", async () => {
+      try {
+        const email = (emailEl.value || "").trim();
+        if (!email) {
+          showToast("warn","Informe o email","Digite seu email para enviar o reset.");
+          return;
+        }
+        await sendPasswordResetEmail(auth, email);
+        showToast("good","Email enviado","Verifique sua caixa de entrada/spam.");
+      } catch (e) {
+        console.error(e);
+        showToast("bad","Erro no reset", normalizeError(e));
+      }
+    });
 
-    tabRecruit.onclick = () => {
-      tabRecruit.classList.add("primary");
-      tabRecruit.classList.remove("link");
-      tabScreening.classList.remove("primary");
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        showToast("good","Saiu","Sessão encerrada.");
+      } catch (e) {
+        console.error(e);
+        showToast("bad","Erro ao sair", normalizeError(e));
+      }
+    });
 
-      recruitView.classList.remove("hidden");
-      screeningView.classList.add("hidden");
-    };
+    let currentUser = null;
+    let currentRole = "—";
 
-    tabScreening.onclick = () => {
-      tabScreening.classList.add("primary");
-      tabRecruit.classList.remove("primary");
+    async function ensureUserDoc(uid, email) {
+      const ref = doc(db, "users", uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        // default role: assistente
+        await setDoc(ref, { email: email || "", role: "assistente", createdAt: serverTimestamp() });
+      }
+      const fresh = await getDoc(ref);
+      return fresh.data() || {};
+    }
 
-      recruitView.classList.add("hidden");
-      screeningView.classList.remove("hidden");
+    // Calendar state
+    const DOW = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+    let viewYear, viewMonth; // month 0-11
+    let selectedDate = null; // Date
+    let unsubMonth = null;
+    let monthData = new Map(); // key yyyy-mm-dd => { count }
+
+    function pad2(n){return String(n).padStart(2,"0");}
+    function fmtYMD(d){return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;}
+
+    function setSelectedDate(d) {
+      selectedDate = d;
+      selectedDayLabel.textContent = d ? fmtYMD(d) : "—";
       renderCalendar();
-    };
+    }
 
-    // =========================
-    // 7) Screening Calendar + Save
-    // =========================
-    const cal = document.getElementById("screeningCalendar");
-    const monthLabel = document.getElementById("monthLabel");
-    const selectedDayLabel = document.getElementById("selectedDayLabel");
-    const btnPrevMonth = document.getElementById("btnPrevMonth");
-    const btnNextMonth = document.getElementById("btnNextMonth");
+    function monthStartEnd(y, m) {
+      const start = new Date(y, m, 1);
+      const end = new Date(y, m+1, 1);
+      return { start, end };
+    }
 
-    const procForm = document.getElementById("procForm");
-    const procPatient = document.getElementById("procPatient");
-    const procType = document.getElementById("procType");
-    const procTime = document.getElementById("procTime");
-    const btnSaveProcedure = document.getElementById("btnSaveProcedure");
-
-    // impede reload no submit
-    procForm.addEventListener("submit", (e) => e.preventDefault());
-
-    let viewDate = new Date(); // mês atual
-    let selectedDateISO = null;
-
-    btnPrevMonth.onclick = () => { viewDate.setMonth(viewDate.getMonth() - 1); renderCalendar(); };
-    btnNextMonth.onclick = () => { viewDate.setMonth(viewDate.getMonth() + 1); renderCalendar(); };
-
-    function pad2(n){ return String(n).padStart(2,"0"); }
+    function renderDOW() {
+      dowRow.innerHTML = "";
+      for (const name of DOW) {
+        const el = document.createElement("div");
+        el.className = "dow";
+        el.textContent = name;
+        dowRow.appendChild(el);
+      }
+    }
 
     function renderCalendar() {
-      const y = viewDate.getFullYear();
-      const m = viewDate.getMonth(); // 0-11
-      const first = new Date(y, m, 1);
-      const last = new Date(y, m + 1, 0);
-      const monthName = first.toLocaleDateString("pt-BR", { month:"long", year:"numeric" });
+      if (viewYear == null || viewMonth == null) return;
 
+      const monthName = new Date(viewYear, viewMonth, 1).toLocaleDateString("pt-BR", { month:"long", year:"numeric" });
       monthLabel.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
       cal.innerHTML = "";
 
-      // cria dias do mês
-      for (let d = 1; d <= last.getDate(); d++) {
-        const iso = `${y}-${pad2(m+1)}-${pad2(d)}`;
+      const first = new Date(viewYear, viewMonth, 1);
+      const startDow = first.getDay(); // 0=Dom
+      const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+
+      // leading blanks
+      for (let i=0;i<startDow;i++){
+        const blank = document.createElement("div");
+        blank.className = "day disabled";
+        blank.style.visibility = "hidden";
+        cal.appendChild(blank);
+      }
+
+      for (let day=1; day<=daysInMonth; day++){
+        const d = new Date(viewYear, viewMonth, day);
+        const key = fmtYMD(d);
+
         const cell = document.createElement("div");
         cell.className = "day";
-        cell.dataset.date = iso;
-        cell.textContent = d;
 
-        if (iso === selectedDateISO) cell.classList.add("selected");
+        if (selectedDate && fmtYMD(selectedDate) === key) cell.classList.add("selected");
+
+        const num = document.createElement("div");
+        num.className = "num";
+        num.textContent = day;
+
+        const badges = document.createElement("div");
+        badges.className = "badges";
+
+        const info = monthData.get(key);
+        if (info && info.count > 0) {
+          const b = document.createElement("span");
+          b.className = "badge has";
+          b.textContent = `${info.count} registro(s)`;
+          badges.appendChild(b);
+        } else {
+          const b = document.createElement("span");
+          b.className = "badge";
+          b.textContent = "—";
+          badges.appendChild(b);
+        }
+
+        cell.appendChild(num);
+        cell.appendChild(badges);
+
+        cell.addEventListener("click", () => {
+          setSelectedDate(d);
+        });
+
         cal.appendChild(cell);
       }
     }
 
-    // clique no dia (robusto com closest)
-    cal.addEventListener("click", (e) => {
-      const cell = e.target.closest("[data-date]");
-      if (!cell) return;
+    function setMonth(y, m) {
+      viewYear = y; viewMonth = m;
+      setSelectedDate(null);
+      subscribeMonth();
+      renderCalendar();
+    }
 
-      selectedDateISO = cell.dataset.date;
+    function subscribeMonth() {
+      if (unsubMonth) { unsubMonth(); unsubMonth = null; }
+      monthData = new Map();
 
-      cal.querySelectorAll(".day.selected").forEach(x => x.classList.remove("selected"));
-      cell.classList.add("selected");
+      // Só faz realtime se estiver logado
+      if (!currentUser) { renderCalendar(); return; }
 
-      const [yy, mm, dd] = selectedDateISO.split("-");
-      selectedDayLabel.textContent = `Dia selecionado: ${dd}/${mm}/${yy}`;
+      const { start, end } = monthStartEnd(viewYear, viewMonth);
+      // Usamos string yyyy-mm-dd para filtrar de forma simples (evita timezone)
+      const startKey = fmtYMD(start);
+      const endKey = fmtYMD(new Date(end.getFullYear(), end.getMonth(), end.getDate())); // 1º dia do próximo mês
+
+      const q = query(
+        collection(db, "screening_procedures"),
+        where("dateKey", ">=", startKey),
+        where("dateKey", "<", endKey)
+      );
+
+      unsubMonth = onSnapshot(q, (snap) => {
+        monthData = new Map();
+        snap.forEach(docSnap => {
+          const data = docSnap.data();
+          const k = data.dateKey;
+          if (!k) return;
+          const prev = monthData.get(k) || { count: 0 };
+          prev.count += 1;
+          monthData.set(k, prev);
+        });
+        renderCalendar();
+      }, (err) => {
+        console.error(err);
+        showToast("bad","Erro no realtime", normalizeError(err));
+      });
+    }
+
+    prevMonth.addEventListener("click", () => {
+      const d = new Date(viewYear, viewMonth - 1, 1);
+      setMonth(d.getFullYear(), d.getMonth());
+    });
+    nextMonth.addEventListener("click", () => {
+      const d = new Date(viewYear, viewMonth + 1, 1);
+      setMonth(d.getFullYear(), d.getMonth());
     });
 
-    // salvar procedimento
-    btnSaveProcedure.addEventListener("click", async (e) => {
-      e.preventDefault();
-
-      if (!selectedDateISO) return toast("Selecione um dia no calendário.", "err");
-      if (!auth.currentUser) return toast("Faça login para salvar.", "err");
-
-      const patientId = (procPatient.value || "").trim();
-      const tipo = (procType.value || "").trim();
-      const hora = (procTime.value || "").trim();
-
-      if (!patientId || !tipo) return toast("Preencha paciente e tipo.", "err");
-
+    saveProcBtn.addEventListener("click", async () => {
       try {
-        const [Y, M, D] = selectedDateISO.split("-").map(Number);
-        const dateObj = new Date(Y, M - 1, D, 12, 0, 0);
+        if (!currentUser) {
+          showToast("warn","Não autenticado","Faça login para salvar.");
+          return;
+        }
+        if (!selectedDate) {
+          showToast("warn","Selecione um dia","Clique em um dia do calendário.");
+          return;
+        }
 
-        await addDoc(collection(db, "screening_procedures"), {
-          dateISO: selectedDateISO,
-          dateTS: Timestamp.fromDate(dateObj),
-          patientId,
-          tipo,
-          hora,
-          createdAt: serverTimestamp(),
-          createdBy: auth.currentUser.uid
-        });
+        const payload = {
+          uid: currentUser.uid,
+          email: currentUser.email || "",
+          role: currentRole || "assistente",
+          type: procType.value,
+          dateKey: fmtYMD(selectedDate),
+          createdAt: serverTimestamp()
+        };
 
-        toast("Procedimento salvo no Screening!", "ok");
-        procTime.value = "";
-      } catch (err) {
-        console.error("ERRO SCREENING SAVE:", err);
-        toast("Erro ao salvar Screening: " + (err.code || err.message), "err");
+        await addDoc(collection(db, "screening_procedures"), payload);
+        showToast("good","Salvo","Procedimento registrado com sucesso.");
+      } catch (e) {
+        console.error(e);
+        showToast("bad","Erro ao salvar", normalizeError(e));
       }
     });
 
-    // inicia calendário se abrir na aba screening
-    // renderCalendar();
+    // Init UI
+    renderDOW();
+    const now = new Date();
+    setMonth(now.getFullYear(), now.getMonth());
 
+    // Auth state
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user || null;
+
+      if (!user) {
+        authStatus.textContent = "Não autenticado";
+        logoutBtn.style.display = "none";
+        dbgUser.textContent = "—";
+        dbgRole.textContent = "—";
+        currentRole = "—";
+        if (unsubMonth) { unsubMonth(); unsubMonth = null; }
+        monthData = new Map();
+        renderCalendar();
+        return;
+      }
+
+      authStatus.textContent = "Autenticado";
+      logoutBtn.style.display = "";
+      dbgUser.textContent = user.email || user.uid;
+
+      try {
+        const udata = await ensureUserDoc(user.uid, user.email || "");
+        currentRole = udata.role || "assistente";
+        dbgRole.textContent = currentRole;
+      } catch (e) {
+        console.error(e);
+        currentRole = "assistente";
+        dbgRole.textContent = currentRole;
+      }
+
+      subscribeMonth();
+      renderCalendar();
+    });
   </script>
 </body>
 </html>
