@@ -203,49 +203,47 @@
   </div>
 
   <script type="module">
-    // ==========================================================
-    // 1) COLE AQUI O firebaseConfig REAL (substitui "COLE_AQUI")
-    //    Isso corrige o erro: FirebaseError: auth/api-key-not-valid
-    // ==========================================================
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged,
-      signInWithEmailAndPassword,
-      sendPasswordResetEmail,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import {
-      getFirestore,
-      doc,
-      getDoc,
-      setDoc,
-      addDoc,
-      collection,
-      query,
-      where,
-      onSnapshot,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  // Firebase config (copiado do Firebase Console)
 
-   const firebaseConfig = {
-  apiKey: "AIzaSyCvoVAWsVMYfAQv-pISsn7mNfdInIjLDFo",
-  authDomain: "iep-recrutamento.firebaseapp.com",
-  projectId: "iep-recrutamento",
-  storageBucket: "iep-recrutamento.firebasestorage.app",
-  messagingSenderId: "297731374831",
-  appId: "1:297731374831:web:684eed6683602d6c3fe51a",
-  measurementId: "G-8ST5S7FWE0"
-};
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc,
+    addDoc,
+    collection,
+    query,
+    where,
+    onSnapshot,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // Proteção contra erro de config placeholder
-    if (!firebaseConfig.apiKey || firebaseConfig.apiKey.includes("COLE_AQUI")) {
-      console.error("Firebase apiKey inválida/placeholder. Cole o firebaseConfig real do Firebase Console.");
-    }
+  const firebaseConfig = {
+    apiKey: "AIzaSyCvoVAWsVMYfAQv-pISsn7mNfdInIjLDFo",
+    authDomain: "iep-recrutamento.firebaseapp.com",
+    projectId: "iep-recrutamento",
+    storageBucket: "iep-recrutamento.firebasestorage.app",
+    messagingSenderId: "297731374831",
+    appId: "1:297731374831:web:684eed6683602d6c3fe51a",
+    measurementId: "G-8ST5S7FWE0"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+  // Proteção contra erro de config
+  if (!firebaseConfig.apiKey) {
+    console.error("Firebase apiKey ausente no firebaseConfig.");
+  }
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
     // UI refs
     const $ = (id) => document.getElementById(id);
@@ -581,4 +579,5 @@
   </script>
 </body>
 </html>
+
 
