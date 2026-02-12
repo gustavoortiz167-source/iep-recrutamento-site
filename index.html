@@ -18,62 +18,7 @@
   <style>
     :root{
       --bg:#0b0c10;
-      --panel:#11131a;
-      --panel2:#0f1117;
-      --line:#24283a;
-      --text:#e7e8ee;
-      --muted:#a9adbd;
-      --blue:#1E90FF;
-      --green:#36d399;
-      --yellow:#fbbf24;
-      --red:#ef4444;
-      --radius:16px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
-      background: radial-gradient(1200px 800px at 20% 10%, rgba(30,144,255,.16), transparent 55%),
-                  radial-gradient(900px 700px at 90% 20%, rgba(54,211,153,.10), transparent 55%),
-                  var(--bg);
-      color:var(--text);
-    }
-    a{color:var(--blue)}
-    .wrap{max-width:1200px;margin:26px auto;padding:0 14px}
-    header{
-      display:flex;align-items:center;justify-content:space-between;gap:14px;
-      padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius);
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      backdrop-filter: blur(8px);
-    }
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{
-      width:44px;height:44px;border-radius:12px;background:rgba(30,144,255,.12);
-      display:grid;place-items:center;border:1px solid rgba(30,144,255,.25);
-    }
-    .brand h1{font-size:16px;margin:0}
-    .brand small{display:block;color:var(--muted);margin-top:2px;font-size:12px}
-
-    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-    input,select,button,textarea{
-      font:inherit;
-      background:var(--panel2);
-      color:var(--text);
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px 12px;
-      outline:none;
-    }
-    input::placeholder{color:#747a92}
-    button{cursor:pointer}
-    .btn{background:rgba(30,144,255,.15);border-color:rgba(30,144,255,.35)}
-    .btn:hover{background:rgba(30,144,255,.22)}
-    .ghost{background:transparent}
-    .danger{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.35)}
-    .danger:hover{background:rgba(239,68,68,.18)}
-    .ok{background:rgba(54,211,153,.10);border-color:rgba(54,211,153,.35)}
-    .ok:hover{background:rgba(54,211,153,.16)}
-    .chip{
+@@ -73,6 +77,22 @@
       padding:6px 10px;border-radius:999px;border:1px solid var(--line);
       background:rgba(255,255,255,.03);color:var(--muted);font-size:12px
     }
@@ -96,9 +41,7 @@
     .grid{display:grid;grid-template-columns: 1.05fr .95fr;gap:14px;margin-top:14px}
     @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
 
-    .card{
-      border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.03);
-      padding:14px;
+@@ -82,6 +102,7 @@
     }
     .card h2{margin:0 0 10px 0;font-size:14px;color:#d7dbef}
     .muted{color:var(--muted)}
@@ -106,37 +49,11 @@
     .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
     @media (max-width: 720px){ .kpis{grid-template-columns:repeat(2,1fr)} }
     .kpi{
-      border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.18);
-      padding:12px 12px;
-    }
-    .kpi .label{font-size:12px;color:var(--muted)}
-    .kpi .val{font-size:22px;font-weight:600;margin-top:2px}
-    .kpi .hint{font-size:12px;margin-top:4px;color:var(--muted)}
-    .kpi.blue .val{color:var(--blue)}
-    .kpi.green .val{color:var(--green)}
-    .kpi.yellow .val{color:var(--yellow)}
-    .kpi.red .val{color:var(--red)}
-
-    .formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media (max-width: 720px){ .formgrid{grid-template-columns:1fr} }
-    .formgrid .full{grid-column:1 / -1}
-    .field label{display:block;font-size:12px;color:var(--muted);margin:2px 0 6px}
-    .field input,.field select,.field textarea{width:100%}
-    textarea{min-height:70px;resize:vertical}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-
-    .tablewrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
-    table{width:100%;border-collapse:collapse;min-width:980px}
-    th,td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.06);vertical-align:top}
-    th{position:sticky;top:0;background:#10131b;font-size:12px;color:var(--muted);text-align:left}
-    td{font-size:13px}
-    .nowrap{white-space:nowrap}
-    .tag{
-      font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);
-      display:inline-block;background:rgba(255,255,255,.03);color:var(--muted)
+@@ -116,18 +137,45 @@
     }
     .tag.ok{color:var(--green);border-color:rgba(54,211,153,.35)}
     .tag.no{color:var(--red);border-color:rgba(239,68,68,.35)}
+    .tag.wait{color:var(--yellow);border-color:rgba(251,191,36,.35)}
     .small{font-size:12px;color:var(--muted)}
     .hidden{display:none !important}
     .toast{
@@ -147,6 +64,7 @@
       z-index:9999;
     }
     .toast.err{border-color:rgba(239,68,68,.35)}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,monospace}
     .sep{height:1px;background:rgba(255,255,255,.06);margin:10px 0}
 
     /* Calendar */
@@ -176,61 +94,29 @@
     .listMini{display:flex;flex-direction:column;gap:8px}
     .mini{border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);border-radius:14px;padding:10px;}
     .mini b{font-size:12px}
-    body { font-family: system-ui, Arial; margin: 0; padding: 18px; background:#0b1220; color:#e6eefc; }
-    .row { display:flex; gap:12px; flex-wrap:wrap; }
-    .card { background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:14px; }
-    .w50 { flex:1; min-width:320px; }
-    input, select, button { padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.2); background:rgba(0,0,0,.25); color:#fff; }
-    button { cursor:pointer; }
-    button.primary { background:#2a67ff; border-color:#2a67ff; }
-    button.link { background:transparent; border:none; text-decoration:underline; opacity:.9; }
-    .muted { opacity:.75; font-size: 13px; }
-    .tabs button { margin-right: 8px; }
-    .hidden { display:none; }
-    .grid { display:grid; grid-template-columns: repeat(7, minmax(42px,1fr)); gap:8px; }
-    .day { aspect-ratio: 1/1; border-radius:12px; border:1px solid rgba(255,255,255,.14); display:flex; align-items:flex-start; justify-content:flex-start; padding:10px; cursor:pointer; background: rgba(0,0,0,.18); }
-    .day:hover { outline: 2px solid rgba(42,103,255,.4); }
-    .day.selected { outline: 2px solid #2a67ff; }
-    .toast { position: fixed; right: 14px; top: 14px; z-index: 99; padding: 12px 14px; border-radius: 12px; max-width: 420px; }
-    .toast.ok { background: rgba(34,197,94,.18); border:1px solid rgba(34,197,94,.4); }
-    .toast.err{ background: rgba(239,68,68,.18); border:1px solid rgba(239,68,68,.4); }
-    .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-    .pill { padding: 8px 10px; border-radius: 999px; border:1px solid rgba(255,255,255,.14); background: rgba(0,0,0,.18); }
   </style>
 </head>
 
-<body>
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo">🧬</div>
-        <div>
-          <h1>IEP Recrutamento — Online</h1>
-          <small>Firestore + Auth (Email/Senha) • Admin/Assistente • Realtime</small>
-        </div>
-      </div>
-
-      <div class="row">
-        <span id="roleChip" class="chip">Não autenticado</span>
-        <input id="emailLogin" type="email" placeholder="email" autocomplete="username" style="width:220px">
-        <input id="passwordLogin" type="password" placeholder="senha" autocomplete="current-password" style="width:180px">
-        <button id="loginBtn" class="btn">Entrar</button>
-        <button id="logoutBtn" class="ghost hidden">Sair</button>
+@@ -151,235 +199,332 @@
       </div>
     </header>
-  <div id="toast" class="toast hidden"></div>
 
+    <div class="grid">
+      <!-- LEFT -->
+      <div class="card">
+        <h2>Cadastro / Edição</h2>
     <div class="tabs">
       <button id="tabRecruit" class="tab active">Recrutamento</button>
       <button id="tabScreen" class="tab">Screening</button>
       <span class="chip" id="notiChip">Notificações: internas</span>
       <button id="enableNotiBtn" class="ghost">Ativar notificação do navegador</button>
-  <div class="topbar card">
-    <div>
-      <div style="font-size:18px;font-weight:700;">IEP Recrutamento — Online</div>
-      <div class="muted">Firestore + Auth (Email/Senha) • Admin/Assistente • Realtime</div>
     </div>
 
+        <div class="formgrid">
+          <div class="field full">
+            <label>Nome / Identificador</label>
+            <input id="nome" placeholder="Ex: Iniciais + código / nome" />
+          </div>
     <!-- RECRUTAMENTO -->
     <div id="viewRecruit">
       <div class="grid">
@@ -238,12 +124,28 @@
         <div class="card">
           <h2>Cadastro / Edição</h2>
 
+          <div class="field">
+            <label>Status</label>
+            <select id="status">
+              <option value="">Selecione</option>
+              <option>Triagem</option>
+              <option>Pré-screening</option>
+              <option>Screening</option>
+              <option>Randomizado</option>
+              <option>Falha de screening</option>
+              <option>Em follow-up</option>
+            </select>
+          </div>
           <div class="formgrid">
             <div class="field full">
               <label>Nome / Identificador</label>
               <input id="nome" placeholder="Ex: Iniciais + código / nome" />
             </div>
 
+          <div class="field">
+            <label>Estudo</label>
+            <input id="estudo" placeholder="Ex: EVOKE-04 / SYMPHONY-1" />
+          </div>
             <div class="field">
               <label>Status</label>
               <select id="status">
@@ -256,16 +158,35 @@
               </select>
             </div>
 
+          <div class="field">
+            <label>Data (referência)</label>
+            <input id="data" type="date" />
+          </div>
             <div class="field">
               <label>Estudo</label>
               <input id="estudo" placeholder="Ex: EVOKE-04 / SYMPHONY-1" />
             </div>
 
+          <div class="field">
+            <label>Encaminhador</label>
+            <select id="encaminhador">
+              <option value="">Selecione</option>
+              <option>Dr. Milton</option>
+              <option>Dr. Hélio</option>
+              <option>Dr. Thiago</option>
+              <option>ALTY</option>
+              <option>Outro</option>
+            </select>
+          </div>
             <div class="field">
               <label>Data (referência)</label>
               <input id="data" type="date" />
             </div>
 
+          <div class="field full hidden" id="wrapOutroEnc">
+            <label>Outro encaminhador</label>
+            <input id="outroEncaminhador" placeholder="Digite o encaminhador" />
+          </div>
             <div class="field">
               <label>Encaminhador</label>
               <select id="encaminhador">
@@ -278,11 +199,25 @@
               </select>
             </div>
 
+          <div class="field">
+            <label>TCLE agendado?</label>
+            <select id="tcleAgendado">
+              <option>Não</option>
+              <option>Sim</option>
+            </select>
+          </div>
             <div class="field full hidden" id="wrapOutroEnc">
               <label>Outro encaminhador</label>
               <input id="outroEncaminhador" placeholder="Digite o encaminhador" />
             </div>
 
+          <div class="field">
+            <label>TCLE assinado?</label>
+            <select id="tcleAssinado">
+              <option>Não</option>
+              <option>Sim</option>
+            </select>
+          </div>
             <div class="field">
               <label>TCLE agendado?</label>
               <select id="tcleAgendado">
@@ -291,6 +226,13 @@
               </select>
             </div>
 
+          <div class="field">
+            <label>Elegível?</label>
+            <select id="elegivel">
+              <option>Sim</option>
+              <option>Não</option>
+            </select>
+          </div>
             <div class="field">
               <label>TCLE assinado?</label>
               <select id="tcleAssinado">
@@ -318,6 +260,15 @@
               </select>
             </div>
 
+          <div class="field">
+            <label>Motivo não elegível</label>
+            <select id="motivoNaoElegivel">
+              <option value="">(se aplicável)</option>
+              <option>Progressão</option>
+              <option>Perda de follow-up</option>
+              <option>Recusa do paciente</option>
+              <option>Outro</option>
+            </select>
             <div class="field full hidden" id="wrapOutroMotivo">
               <label>Outro motivo</label>
               <input id="outroMotivo" placeholder="Digite o motivo" />
@@ -329,18 +280,19 @@
             </div>
           </div>
 
+          <div class="field full hidden" id="wrapOutroMotivo">
+            <label>Outro motivo</label>
+            <input id="outroMotivo" placeholder="Digite o motivo" />
           <div class="actions">
             <button id="saveBtn" class="ok">Salvar</button>
             <button id="cancelBtn" class="ghost hidden">Cancelar edição</button>
             <span class="small" id="accessHint">Faça login para salvar.</span>
           </div>
 
+          <div class="field full">
+            <label>Observações</label>
+            <textarea id="obs" placeholder="Notas rápidas (sem dados sensíveis desnecessários)"></textarea>
           <div class="sep"></div>
-    <div class="row" style="align-items:center;">
-      <div id="authPill" class="pill">Não autenticado</div>
-      <button id="btnLogout" class="hidden">Sair</button>
-    </div>
-  </div>
 
           <div id="adminPanel" class="hidden">
             <h2>Painel Admin</h2>
@@ -349,27 +301,18 @@
               Dica: a dupla cria login no Authentication, faz login 1x, e você libera o UID em <b>Firestore &gt; users</b>.
             </div>
           </div>
-  <div class="row" style="margin-top:14px;">
-    <!-- LOGIN -->
-    <div class="card w50" id="loginCard">
-      <div style="font-weight:700;margin-bottom:10px;">Login</div>
-      <div class="row">
-        <input id="email" type="email" placeholder="seu@email.com" style="flex:1; min-width:260px;" />
-        <input id="password" type="password" placeholder="********" style="flex:1; min-width:200px;" />
-        <button id="btnLogin" class="primary">Entrar</button>
-      </div>
-      <div style="margin-top:10px;">
-        <button id="btnForgot" class="link" type="button">Esqueci minha senha</button>
-        <div class="muted" style="margin-top:6px;">
-          Dica: se der “muitas tentativas”, use “Esqueci minha senha” para destravar.
         </div>
-      </div>
-    </div>
 
+        <div class="actions">
+          <button id="saveBtn" class="ok">Salvar</button>
+          <button id="cancelBtn" class="ghost hidden">Cancelar edição</button>
+          <span class="small" id="accessHint">Faça login para salvar.</span>
+        </div>
         <!-- RIGHT -->
         <div class="card">
           <h2>Visão geral</h2>
 
+        <div class="sep"></div>
           <div class="kpis">
             <div class="kpi blue">
               <div class="label">Total</div>
@@ -392,6 +335,10 @@
               <div class="hint">tcleAssinado=Sim</div>
             </div>
 
+        <!-- ADMIN PANEL -->
+        <div id="adminPanel" class="hidden">
+          <h2>Painel Admin</h2>
+          <div class="small muted">Crie/ative usuários e defina perfil. (Requer role=admin)</div>
             <div class="kpi blue">
               <div class="label">Encaminhadores</div>
               <div id="kpiEnc" class="val">0</div>
@@ -414,16 +361,25 @@
             </div>
           </div>
 
+          <div class="formgrid" style="margin-top:10px">
           <div style="margin-top:12px" class="formgrid">
             <div class="field">
+              <label>E-mail do usuário</label>
+              <input id="adminUserEmail" placeholder="ex: assistente@..." />
               <label>Busca</label>
               <input id="search" placeholder="nome / status / estudo / encaminhador" />
             </div>
             <div class="field">
+              <label>Senha temporária</label>
+              <input id="adminUserPass" placeholder="mín. 6 chars" />
               <label>Mês</label>
               <input id="monthFilter" type="month" />
             </div>
             <div class="field">
+              <label>Role</label>
+              <select id="adminUserRole">
+                <option value="assistant">assistant</option>
+                <option value="admin">admin</option>
               <label>Status</label>
               <select id="statusFilter">
                 <option value="">Todos</option>
@@ -435,6 +391,16 @@
               </select>
             </div>
             <div class="field">
+              <label>Ativo</label>
+              <select id="adminUserActive">
+                <option value="true">true</option>
+                <option value="false">false</option>
+              </select>
+            </div>
+            <div class="field full">
+              <button id="adminCreateBtn" class="btn">Criar usuário + definir role</button>
+              <div class="small muted" style="margin-top:6px">
+                Obs: isso usa uma Function (mais seguro). Se você não quiser Functions, eu te passo o fluxo manual pelo console.
               <label>Ações</label>
               <div class="row">
                 <button id="clearMonthBtn" class="ghost">Limpar mês</button>
@@ -449,13 +415,11 @@
           <h2>Indicadores (gráfico)</h2>
           <canvas id="statusChart" height="150"></canvas>
         </div>
-    <!-- ABAS -->
-    <div class="card w50">
-      <div class="tabs" style="margin-bottom:10px;">
-        <button id="tabRecruit" class="primary">Recrutamento</button>
-        <button id="tabScreening">Screening</button>
       </div>
 
+      <!-- RIGHT -->
+      <div class="card">
+        <h2>Visão geral</h2>
       <div class="card" style="margin-top:14px">
         <h2>Pacientes</h2>
         <div class="tablewrap">
@@ -477,13 +441,24 @@
           </table>
         </div>
         <div id="emptyMsg" class="small muted" style="margin-top:10px"></div>
-      <!-- RECRUTAMENTO (placeholder apenas para manter seu layout) -->
-      <div id="recruitView">
-        <div style="font-weight:700;">Recrutamento</div>
-        <div class="muted">Aqui você mantém sua tela atual (cadastro, indicadores, etc.).</div>
       </div>
     </div>
 
+        <div class="kpis">
+          <div class="kpi blue">
+            <div class="label">Total</div>
+            <div id="kpiTotal" class="val">0</div>
+            <div class="hint">na visão atual</div>
+          </div>
+          <div class="kpi green">
+            <div class="label">Elegíveis</div>
+            <div id="kpiElig" class="val">0</div>
+            <div class="hint">elegível=Sim</div>
+          </div>
+          <div class="kpi red">
+            <div class="label">Não elegíveis</div>
+            <div id="kpiNaoElig" class="val">0</div>
+            <div class="hint">elegível=Não</div>
     <!-- SCREENING -->
     <div id="viewScreen" class="hidden">
       <div class="card">
@@ -492,20 +467,37 @@
             <h2>Screening — Calendário (mês atual + próximos)</h2>
             <div class="small muted">Cadastre procedimentos por dia e vincule ao paciente. Alertas: hoje e amanhã (na tela) + opcional do navegador.</div>
           </div>
-      <!-- SCREENING -->
-      <div id="screeningView" class="hidden">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-          <div style="font-weight:700;">Screening — Calendário</div>
+          <div class="kpi yellow">
+            <div class="label">TCLE assinado</div>
+            <div id="kpiTCLE" class="val">0</div>
+            <div class="hint">tcleAssinado=Sim</div>
           <div class="row">
             <button id="prevMonthBtn" class="ghost">◀ Mês</button>
             <span class="chip" id="calTitle">—</span>
             <button id="nextMonthBtn" class="ghost">Mês ▶</button>
-            <button id="btnPrevMonth">◀ Mês</button>
-            <div id="monthLabel" class="pill">—</div>
-            <button id="btnNextMonth">Mês ▶</button>
           </div>
         </div>
 
+        <div style="margin-top:12px" class="formgrid">
+          <div class="field">
+            <label>Busca</label>
+            <input id="search" placeholder="nome / status / estudo / encaminhador" />
+          </div>
+          <div class="field">
+            <label>Mês</label>
+            <input id="monthFilter" type="month" />
+          </div>
+          <div class="field">
+            <label>Status</label>
+            <select id="statusFilter">
+              <option value="">Todos</option>
+              <option>Triagem</option>
+              <option>Pré-screening</option>
+              <option>Screening</option>
+              <option>Randomizado</option>
+              <option>Falha de screening</option>
+              <option>Em follow-up</option>
+            </select>
         <div class="sep"></div>
 
         <div class="calSide">
@@ -513,6 +505,11 @@
             <div class="calGrid" id="calDows"></div>
             <div class="calGrid" id="calGrid"></div>
           </div>
+          <div class="field">
+            <label>Ações</label>
+            <div class="row">
+              <button id="clearMonthBtn" class="ghost">Limpar mês</button>
+              <button id="exportBtn" class="ghost">Exportar CSV</button>
 
           <div>
             <div class="noteBox">
@@ -558,42 +555,16 @@
             </div>
 
             <div class="sep"></div>
-        <div class="muted" style="margin:10px 0;">
-          Clique em um dia para selecionar e depois salve o procedimento. (Funciona somente logado)
-        </div>
 
             <h2>Próximos alertas</h2>
             <div class="listMini" id="alertsBox"></div>
-        <div class="grid" id="screeningCalendar"></div>
-
-        <div class="card" style="margin-top:12px;">
-          <div style="font-weight:700;">Novo procedimento</div>
-          <div class="muted" id="selectedDayLabel" style="margin:6px 0 10px;">Dia selecionado: —</div>
-
-          <form id="procForm" class="row" style="align-items:center;">
-            <input id="procPatient" placeholder="ID / Nome do paciente" style="flex:1; min-width:220px;" />
-            <select id="procType" style="min-width:200px;">
-              <option value="">Tipo</option>
-              <option>TCLE agendado</option>
-              <option>TCLE assinado</option>
-              <option>Exames laboratoriais</option>
-              <option>Exames de imagem</option>
-              <option>Consulta / Avaliação</option>
-              <option>Falha de screening</option>
-              <option>Randomizado</option>
-              <option>Outro</option>
-            </select>
-            <input id="procTime" placeholder="Hora (opcional) ex: 14:30" style="min-width:180px;" />
-            <button id="btnSaveProcedure" class="primary" type="submit">Salvar procedimento</button>
-          </form>
-
-          <div class="muted" style="margin-top:10px;">
-            Se algo bloquear o salvamento, vai aparecer um erro detalhado no toast e no Console.
           </div>
         </div>
 
         <div class="sep"></div>
 
+        <h2>Status (gráfico)</h2>
+        <canvas id="statusChart" height="150"></canvas>
         <h2>Procedimentos do mês</h2>
         <div class="tablewrap">
           <table style="min-width:980px">
@@ -614,34 +585,54 @@
       </div>
     </div>
 
+    <div class="card" style="margin-top:14px">
+      <h2>Pacientes</h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Status</th>
+              <th>Estudo</th>
+              <th>Encaminhador</th>
+              <th>Elegível</th>
+              <th>Motivo</th>
+              <th>Data</th>
+              <th>TCLE</th>
+              <th class="nowrap">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div id="emptyMsg" class="small muted" style="margin-top:10px"></div>
+    </div>
   </div>
 
   <div id="toast" class="toast hidden"></div>
-
-<script type="module">
+@@ -388,15 +533,9 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getFirestore, collection, doc, setDoc, deleteDoc, getDoc,
+    onSnapshot, query, orderBy, serverTimestamp
     onSnapshot, query, orderBy, serverTimestamp, where, getDocs
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
+    createUserWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
   // ======= firebaseConfig (SEU) =======
   const firebaseConfig = {
-    apiKey: "AIzaSyCvoVAWsVMYfAQv-pISsn7mNfdInIjLDFo",
-    authDomain: "iep-recrutamento.firebaseapp.com",
-    projectId: "iep-recrutamento",
-    storageBucket: "iep-recrutamento.firebasestorage.app",
-    messagingSenderId: "297731374831",
-    appId: "1:297731374831:web:684eed6683602d6c3fe51a",
-    measurementId: "G-8ST5S7FWE0"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+@@ -414,18 +553,27 @@
   const auth = getAuth(app);
 
   // ======= Estado =======
+  let DB = [];
   let DB = [];              // patients
   let EVENTS = [];          // screening_events (range por mês)
   let CHART = null;
@@ -666,9 +657,7 @@
 
   function toast(msg, err=false){
     const t = $("toast");
-    t.textContent = msg;
-    t.classList.remove("hidden");
-    t.classList.toggle("err", !!err);
+@@ -435,6 +583,12 @@
     setTimeout(()=>t.classList.add("hidden"), 2400);
   }
 
@@ -681,11 +670,7 @@
   function parseMonth(v){
     if(!v) return null;
     const [y,m] = v.split("-").map(Number);
-    return {y,m};
-  }
-  function inMonth(dateStr, sel){
-    if(!sel) return true;
-    if(!dateStr) return false;
+@@ -446,6 +600,62 @@
     const d = new Date(dateStr);
     return d.getFullYear()===sel.y && (d.getMonth()+1)===sel.m;
   }
@@ -748,33 +733,19 @@
 
   // ======= UI toggles =======
   function toggleOutroEnc(){
-    const v = $("encaminhador").value;
-    $("wrapOutroEnc").classList.toggle("hidden", v !== "Outro");
-    if(v !== "Outro") $("outroEncaminhador").value = "";
-  }
-  function toggleOutroMotivo(){
-    const v = $("motivoNaoElegivel").value;
-    $("wrapOutroMotivo").classList.toggle("hidden", v !== "Outro");
-    if(v !== "Outro") $("outroMotivo").value = "";
-  }
-  $("encaminhador").addEventListener("change", toggleOutroEnc);
-  $("motivoNaoElegivel").addEventListener("change", toggleOutroMotivo);
-  $("elegivel").addEventListener("change", () => {
-    const isNo = $("elegivel").value === "Não";
-    $("motivoNaoElegivel").disabled = !isNo;
-    $("outroMotivo").disabled = !isNo;
-    if(!isNo){
-      $("motivoNaoElegivel").value = "";
-      $("outroMotivo").value = "";
-      toggleOutroMotivo();
-    }
-  });
-
-  // ======= Auth =======
-  async function login(){
+@@ -476,16 +686,10 @@
     const email = $("emailLogin").value.trim();
     const pass = $("passwordLogin").value;
     if(!email || !pass) return toast("Informe email e senha", true);
+
+    try{
+      await signInWithEmailAndPassword(auth, email, pass);
+    }catch(e){
+      toast("Erro no login: " + (e?.message || e), true);
+    }
+  }
+  async function logout(){
+    await signOut(auth);
     try{ await signInWithEmailAndPassword(auth, email, pass); }
     catch(e){ toast("Erro no login: " + (e?.message || e), true); }
   }
@@ -782,26 +753,20 @@
   $("loginBtn").addEventListener("click", login);
   $("logoutBtn").addEventListener("click", logout);
 
-  function setAuthUI(logged){
-    $("logoutBtn").classList.toggle("hidden", !logged);
-    $("loginBtn").classList.toggle("hidden", logged);
-    $("emailLogin").disabled = logged;
-    $("passwordLogin").disabled = logged;
-  }
-
-  async function getRole(uid){
-    const snap = await getDoc(doc(db,"users",uid));
-    if(!snap.exists()) return {active:false, role:null};
-    const data = snap.data() || {};
-    return { active: !!data.active, role: data.role || null };
+@@ -504,31 +708,46 @@
   }
 
   // ======= Firestore realtime =======
+  function startRealtime(){
   function startRealtimePatients(){
     const q = query(collection(db, "patients"), orderBy("data","desc"));
     return onSnapshot(q, (snap)=>{
       DB = snap.docs.map(d => d.data());
       refreshUI();
+    }, (err)=>{
+      console.error(err);
+      toast("Erro ao sincronizar Firestore", true);
+    });
       refreshScreeningUI();
     }, ()=> toast("Erro ao sincronizar pacientes", true));
   }
@@ -822,330 +787,102 @@
       buildAlerts();
     }, ()=> toast("Erro ao sincronizar screening", true));
   }
+  let unsubscribe = null;
 
   onAuthStateChanged(auth, async (user)=>{
     CURRENT_USER = user || null;
 
+    if(unsubscribe){ unsubscribe(); unsubscribe = null; }
     if(unsubPatients){ unsubPatients(); unsubPatients=null; }
     if(unsubEvents){ unsubEvents(); unsubEvents=null; }
 
     if(!user){
       setAuthUI(false);
+      CURRENT_ROLE = null; IS_ACTIVE = false;
       CURRENT_ROLE=null; IS_ACTIVE=false;
       $("roleChip").textContent = "Não autenticado";
       $("accessHint").textContent = "Faça login para salvar.";
       $("adminPanel").classList.add("hidden");
+      DB = [];
+      refreshUI();
       DB=[]; EVENTS=[];
       refreshUI(); refreshScreeningUI();
       return;
     }
 
-    setAuthUI(true);
-
-    const info = await getRole(user.uid);
-    CURRENT_ROLE = info.role;
-    IS_ACTIVE = info.active;
-
-    if(!IS_ACTIVE){
+@@ -542,8 +761,8 @@
       $("roleChip").textContent = "Aguardando liberação";
       $("accessHint").textContent = "Seu acesso não está ativo (admin precisa liberar).";
       $("adminPanel").classList.add("hidden");
+      DB = [];
+      refreshUI();
       DB=[]; EVENTS=[];
       refreshUI(); refreshScreeningUI();
       toast("Acesso não liberado ainda.", true);
       return;
     }
-
-    $("roleChip").textContent = `${user.email} • ${CURRENT_ROLE || "sem role"}`;
+@@ -552,14 +771,14 @@
     $("accessHint").textContent = (CURRENT_ROLE === "admin")
       ? "Admin: pode criar/editar/excluir"
       : "Assistente: pode criar/editar (não exclui)";
+
     $("adminPanel").classList.toggle("hidden", CURRENT_ROLE !== "admin");
 
+    unsubscribe = startRealtime();
     unsubPatients = startRealtimePatients();
     unsubEvents = startRealtimeEventsForCalendar();
     toast("Conectado (online)!");
   });
-  <!-- Firebase + App -->
-  <script type="module">
-    // =========================
-    // 1) Firebase imports
-    // =========================
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-    import {
-      getAuth,
-      setPersistence,
-      browserLocalPersistence,
-      browserSessionPersistence,
-      inMemoryPersistence,
-      signInWithEmailAndPassword,
-      sendPasswordResetEmail,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      serverTimestamp,
-      Timestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-    // =========================
-    // 2) COLE AQUI seu firebaseConfig
-    // =========================
-    const firebaseConfig = {
-      apiKey: "COLE_AQUI",
-      authDomain: "COLE_AQUI",
-      projectId: "COLE_AQUI",
-      storageBucket: "COLE_AQUI",
-      messagingSenderId: "COLE_AQUI",
-      appId: "COLE_AQUI"
-    };
-
+  // ======= Form =======
   // ======= Recrutamento: Form =======
   function validate(){
     const req = ["nome","status","estudo","data"];
     for(const id of req){
-      if(!$(id).value.trim()){
-        toast("Preencha Nome, Status, Estudo e Data", true);
-        return false;
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // =========================
-    // 3) Toast
-    // =========================
-    function toast(msg, type="ok") {
-      const el = document.getElementById("toast");
-      el.className = "toast " + type;
-      el.textContent = msg;
-      el.classList.remove("hidden");
-      setTimeout(() => el.classList.add("hidden"), 5200);
-    }
-
-    // =========================
-    // 4) Auth persistence fallback (evita bugs em navegadores)
-    // =========================
-    (async () => {
-      try {
-        await setPersistence(auth, browserLocalPersistence);
-        console.log("[AUTH] Persistence: local");
-      } catch (e1) {
-        try {
-          await setPersistence(auth, browserSessionPersistence);
-          console.log("[AUTH] Persistence: session");
-        } catch (e2) {
-          await setPersistence(auth, inMemoryPersistence);
-          console.log("[AUTH] Persistence: memory (storage bloqueado)");
-        }
-      }
-    })();
-
-    // =========================
-    // 5) Login + Forgot + Logout
-    // =========================
-    const emailEl = document.getElementById("email");
-    const passEl  = document.getElementById("password");
-    const btnLogin = document.getElementById("btnLogin");
-    const btnForgot = document.getElementById("btnForgot");
-    const btnLogout = document.getElementById("btnLogout");
-    const authPill = document.getElementById("authPill");
-
-    btnLogin.onclick = async () => {
-      const email = (emailEl.value || "").trim();
-      const pass  = passEl.value || "";
-      if (!email || !pass) return toast("Preencha e-mail e senha.", "err");
-
-      btnLogin.disabled = true;
-
-      try {
-        await signInWithEmailAndPassword(auth, email, pass);
-        toast("Login realizado!", "ok");
-      } catch (err) {
-        console.error("ERRO LOGIN:", err);
-
-        const msg = ({
-          "auth/too-many-requests": "Muitas tentativas. Aguarde alguns minutos ou clique em “Esqueci minha senha”.",
-          "auth/wrong-password": "Senha incorreta. Tente novamente ou clique em “Esqueci minha senha”.",
-          "auth/user-not-found": "Usuário não encontrado. Verifique o e-mail digitado.",
-          "auth/invalid-email": "E-mail inválido.",
-          "auth/invalid-credential": "Credencial inválida. Verifique e-mail/senha."
-        })[err.code] || ("Erro no login: " + (err.code || err.message));
-
-        toast(msg, "err");
-      } finally {
-        btnLogin.disabled = false;
-      }
-    }
-    return true;
-  }
-
-  function buildRec(){
-    const enc = ($("encaminhador").value === "Outro")
-      ? ($("outroEncaminhador").value.trim() || "Outro")
-      : $("encaminhador").value;
-
-    const isNo = $("elegivel").value === "Não";
-    const motivo = isNo
-      ? (($("motivoNaoElegivel").value === "Outro")
-          ? ($("outroMotivo").value.trim() || "Outro")
-          : $("motivoNaoElegivel").value)
-      : "";
-
-    return {
-      id: editId || uid(),
-      nome: $("nome").value.trim(),
-      status: $("status").value.trim(),
-      estudo: $("estudo").value.trim(),
-      data: $("data").value,
-      encaminhador: enc || "",
-      tcleAgendado: $("tcleAgendado").value,
-      tcleAssinado: $("tcleAssinado").value,
-      elegivel: $("elegivel").value,
-      motivoNaoElegivel: motivo || "",
-      obs: $("obs").value.trim()
-    };
-  }
-
-  async function save(){
-    if(!CURRENT_USER || !IS_ACTIVE) return toast("Sem acesso. Faça login.", true);
-    if(!validate()) return;
-
-    const rec = buildRec();
-    try{
-      await setDoc(doc(db,"patients",rec.id), {
-        ...rec,
-        updatedAt: serverTimestamp(),
-        updatedBy: CURRENT_USER.uid
-      }, {merge:true});
-
+@@ -613,7 +832,6 @@
       resetForm();
       toast("Salvo!");
     }catch(e){
+      console.error(e);
       toast("Falha ao salvar: " + (e?.message||e), true);
     }
   }
-
-  function resetForm(){
-    editId = null;
-    $("nome").value = "";
-    $("status").value = "";
-    $("estudo").value = "";
-    $("data").value = "";
-    $("encaminhador").value = "";
-    $("outroEncaminhador").value = "";
-    $("tcleAgendado").value = "Não";
-    $("tcleAssinado").value = "Não";
-    $("elegivel").value = "Sim";
-    $("motivoNaoElegivel").value = "";
-    $("outroMotivo").value = "";
-    $("obs").value = "";
-    toggleOutroEnc();
-    toggleOutroMotivo();
-    $("cancelBtn").classList.add("hidden");
-  }
-    btnForgot.onclick = async () => {
-      const email = (emailEl.value || "").trim();
-      if (!email) return toast("Digite seu e-mail para enviar o link de redefinição.", "err");
-
-  function fillForm(p){
-    editId = p.id;
-    $("nome").value = p.nome || "";
-    $("status").value = p.status || "";
-    $("estudo").value = p.estudo || "";
-    $("data").value = p.data || "";
-    $("tcleAgendado").value = p.tcleAgendado || "Não";
-    $("tcleAssinado").value = p.tcleAssinado || "Não";
-    $("elegivel").value = p.elegivel || "Sim";
-    $("obs").value = p.obs || "";
-
-    const knownEnc = ["Dr. Milton","Dr. Hélio","Dr. Thiago","ALTY"];
-    if(p.encaminhador && knownEnc.includes(p.encaminhador)){
-      $("encaminhador").value = p.encaminhador;
-      $("outroEncaminhador").value = "";
-    } else if(p.encaminhador){
-      $("encaminhador").value = "Outro";
-      $("outroEncaminhador").value = p.encaminhador;
-    } else {
-      $("encaminhador").value = "";
-      $("outroEncaminhador").value = "";
-    }
-    toggleOutroEnc();
-
-    const isNo = (p.elegivel === "Não");
+@@ -665,8 +883,8 @@
     $("motivoNaoElegivel").disabled = !isNo;
     $("outroMotivo").disabled = !isNo;
 
+    const knownMot = ["Progressão","Perda de follow-up","Recusa do paciente","Outro"];
     if(isNo){
       const knownMot = ["Progressão","Perda de follow-up","Recusa do paciente","Outro"];
       if(p.motivoNaoElegivel && knownMot.includes(p.motivoNaoElegivel)){
         $("motivoNaoElegivel").value = p.motivoNaoElegivel;
         $("outroMotivo").value = "";
-      } else if(p.motivoNaoElegivel){
-        $("motivoNaoElegivel").value = "Outro";
-        $("outroMotivo").value = p.motivoNaoElegivel;
-      } else {
-        $("motivoNaoElegivel").value = "";
-        $("outroMotivo").value = "";
-      try {
-        await sendPasswordResetEmail(auth, email);
-        toast("Enviei um link de redefinição de senha para seu e-mail.", "ok");
-      } catch (err) {
-        console.error("RESET SENHA:", err);
-        toast("Erro ao enviar redefinição: " + (err.code || err.message), "err");
-      }
-    } else {
-      $("motivoNaoElegivel").value = "";
-      $("outroMotivo").value = "";
-    }
-    toggleOutroMotivo();
-
+@@ -686,7 +904,7 @@
     $("cancelBtn").classList.remove("hidden");
   }
 
+  async function remove(id){
   async function removePatient(id){
     if(!CURRENT_USER || !IS_ACTIVE) return toast("Sem acesso.", true);
     if(CURRENT_ROLE !== "admin") return toast("Assistente não pode excluir.", true);
     if(!confirm("Excluir este registro?")) return;
-
-    try{
-      await deleteDoc(doc(db,"patients",id));
-      toast("Excluído.");
-    }catch(e){
-      toast("Falha ao excluir: " + (e?.message||e), true);
-    }
-  }
-
+@@ -702,7 +920,7 @@
   $("saveBtn").addEventListener("click", save);
   $("cancelBtn").addEventListener("click", () => { resetForm(); toast("Edição cancelada"); });
 
+  // ======= Dataset / filtros =======
   // ======= Recrutamento: Dataset/Filtros =======
   function dataset(){
     const q = ($("search").value || "").toLowerCase();
     const selMonth = parseMonth($("monthFilter").value);
-    const st = ($("statusFilter").value || "").toLowerCase();
-
-    return DB
-      .filter(p=>{
-        const hitQ = !q
-          || (p.nome||"").toLowerCase().includes(q)
-          || (p.status||"").toLowerCase().includes(q)
-          || (p.estudo||"").toLowerCase().includes(q)
-          || (p.encaminhador||"").toLowerCase().includes(q);
-
-        const hitM = inMonth(p.data, selMonth);
-        const hitS = !st || (p.status||"").toLowerCase()===st;
-
-        return hitQ && hitM && hitS;
-      })
-      .sort((a,b)=> (b.data||"").localeCompare(a.data||""));
+@@ -725,10 +943,50 @@
   }
 
   function updateKPIs(list){
+    $("kpiTotal").textContent = list.length;
+    $("kpiElig").textContent = list.filter(x=>x.elegivel==="Sim").length;
+    $("kpiNaoElig").textContent = list.filter(x=>x.elegivel==="Não").length;
+    $("kpiTCLE").textContent = list.filter(x=>x.tcleAssinado==="Sim").length;
     const total = list.length;
     const elig = list.filter(x=>x.elegivel==="Sim").length;
     const nao = list.filter(x=>x.elegivel==="Não").length;
@@ -1177,7 +914,6 @@
 
     const labels = ["Total","Elegíveis","Não elegíveis","TCLE assinado","Encaminhadores","Randomizados","Falha de screening"];
     const data = [total, elig, nao, tcle, enc, rand, fail];
-    };
 
     const ctx = $("statusChart").getContext("2d");
     if(CHART) CHART.destroy();
@@ -1189,93 +925,75 @@
         scales:{
           y:{ beginAtZero:true, ticks:{ precision:0 } }
         }
-    btnLogout.onclick = async () => {
-      try {
-        await signOut(auth);
-        toast("Você saiu.", "ok");
-      } catch (err) {
-        console.error(err);
-        toast("Erro ao sair: " + (err.code || err.message), "err");
       }
     });
   }
 
   function renderTable(){
-    const tbody = $("tableBody");
-    const list = dataset();
-    tbody.innerHTML = "";
-
-    for(const r of list){
-      const tagElig = (r.elegivel==="Sim") ? `<span class="tag ok">Sim</span>` : `<span class="tag no">Não</span>`;
-      const tagTCLE = (r.tcleAssinado==="Sim") ? `<span class="tag ok">Sim</span>` : `<span class="tag">Não</span>`;
-
-      tbody.insertAdjacentHTML("beforeend", `
-        <tr>
-          <td>
-            <div>${esc(r.nome)}</div>
-            ${r.obs ? `<div class="small">${esc(r.obs)}</div>` : ``}
-          </td>
-          <td>${esc(r.status)}</td>
-          <td>${esc(r.estudo)}</td>
-          <td>${esc(r.encaminhador)}</td>
-          <td>${tagElig}</td>
-          <td>${esc(r.motivoNaoElegivel || "-")}</td>
-          <td class="nowrap">${esc(r.data)}</td>
-          <td>${tagTCLE}</td>
-          <td class="nowrap">
-            <button class="btn" data-edit="${esc(r.id)}">✏️</button>
-            <button class="danger" data-del="${esc(r.id)}">🗑️</button>
-          </td>
-        </tr>
-      `);
-    }
-
-    $("emptyMsg").textContent = list.length ? "" : "Sem registros para esta visão.";
+@@ -765,7 +1023,6 @@
     updateKPIs(list);
     updateChart(list);
 
+    // bind buttons
     document.querySelectorAll("[data-edit]").forEach(b=>{
       b.onclick = () => {
         const id = b.getAttribute("data-edit");
-        const p = DB.find(x=>x.id===id);
-        if(p) fillForm(p);
+@@ -774,30 +1031,11 @@
       };
     });
     document.querySelectorAll("[data-del]").forEach(b=>{
+      b.onclick = () => remove(b.getAttribute("data-del"));
+    });
+  }
+
+  function updateChart(list){
+    const counts = {};
+    for(const p of list){
+      const k = p.status || "Sem status";
+      counts[k] = (counts[k]||0)+1;
+    }
+    const labels = Object.keys(counts);
+    const data = Object.values(counts);
+
+    const ctx = $("statusChart").getContext("2d");
+    if(CHART) CHART.destroy();
+    CHART = new Chart(ctx, {
+      type:"pie",
+      data:{ labels, datasets:[{ data }] }
       b.onclick = () => removePatient(b.getAttribute("data-del"));
     });
   }
 
+  function refreshUI(){
+    renderTable();
+  }
   function refreshUI(){ renderTable(); }
 
   ["search","monthFilter","statusFilter"].forEach(id=>{
     $(id).addEventListener("input", refreshUI);
-    $(id).addEventListener("change", refreshUI);
-  });
-
-  $("clearMonthBtn").addEventListener("click", ()=>{
-    $("monthFilter").value = "";
+@@ -809,10 +1047,10 @@
     refreshUI();
   });
 
+  // ======= CSV Export =======
   // ======= Export CSV =======
   $("exportBtn").addEventListener("click", ()=>{
     const rows = dataset();
+    const header = ["id","nome","status","estudo","data","encaminhador","tcleAgendado","tcleAssinado","elegivel","motivoNaoElegivel","obs","updatedBy"];
     const header = ["id","nome","status","estudo","data","encaminhador","tcleAgendado","tcleAssinado","elegivel","motivoNaoElegivel","obs"];
     const csv = [
       header.join(","),
       ...rows.map(r => header.map(h => `"${String(r[h] ?? "").replaceAll('"','""')}"`).join(","))
-    ].join("\n");
-
-    const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "iep_recrutamento_export.csv";
-    a.click();
+@@ -827,24 +1065,355 @@
     URL.revokeObjectURL(url);
   });
 
+  // ======= Admin Panel (opcional) =======
+  // IMPORTANTE: criar usuário pelo front-end exige uma abordagem segura.
+  // Aqui eu deixei o UI pronto, mas a criação REAL (recomendada) deve ser via Cloud Function/Admin SDK.
+  // Para não travar seu fluxo, abaixo deixo o método manual oficial (console) e você pode ignorar esse botão.
+  $("adminCreateBtn").addEventListener("click", async ()=>{
+    toast("Para criação segura de usuários, use o console (Authentication). Posso te passar a Cloud Function se você quiser.", true);
   // ======= Export PDF (bonito) =======
   $("exportPdfBtn").addEventListener("click", ()=>{
     const rows = dataset();
@@ -1370,6 +1088,10 @@
     docPdf.save("IEP_Indicadores.pdf");
   });
 
+  // ======= Init =======
+  // Ajustes iniciais do formulário
+  toggleOutroEnc();
+  toggleOutroMotivo();
   // ======= Screening: Calendar UI =======
   function ensureDows(){
     const el = $("calDows");
@@ -1421,7 +1143,6 @@
       box.className = "calDay";
       if(dtISO === todayISO) box.classList.add("today");
       if(map[dtISO] && map[dtISO].length) box.classList.add("has");
-    };
 
       box.innerHTML = `<div class="n">${d}</div>`;
       if(map[dtISO] && map[dtISO].length){
@@ -1431,13 +1152,6 @@
         pill.className="pill";
         pill.textContent = map[dtISO].length>1 ? `${label} +${map[dtISO].length-1}` : label;
         box.appendChild(pill);
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        authPill.textContent = user.email || "Autenticado";
-        btnLogout.classList.remove("hidden");
-      } else {
-        authPill.textContent = "Não autenticado";
-        btnLogout.classList.add("hidden");
       }
 
       box.onclick = () => {
@@ -1531,21 +1245,6 @@
       createdBy: CURRENT_USER.uid,
       updatedAt: serverTimestamp(),
       updatedBy: CURRENT_USER.uid
-    // =========================
-    // 6) Tabs
-    // =========================
-    const tabRecruit = document.getElementById("tabRecruit");
-    const tabScreening = document.getElementById("tabScreening");
-    const recruitView = document.getElementById("recruitView");
-    const screeningView = document.getElementById("screeningView");
-
-    tabRecruit.onclick = () => {
-      tabRecruit.classList.add("primary");
-      tabRecruit.classList.remove("link");
-      tabScreening.classList.remove("primary");
-
-      recruitView.classList.remove("hidden");
-      screeningView.classList.add("hidden");
     };
 
     try{
@@ -1557,9 +1256,6 @@
         screeningLastEventDate: pickedDateISO,
         screeningLastEventTitle: title
       }, {merge:true});
-    tabScreening.onclick = () => {
-      tabScreening.classList.add("primary");
-      tabRecruit.classList.remove("primary");
 
       resetScrForm();
       toast("Procedimento salvo!");
@@ -1568,10 +1264,6 @@
     }
   }
   $("scrSaveBtn").onclick = saveEvent;
-      recruitView.classList.add("hidden");
-      screeningView.classList.remove("hidden");
-      renderCalendar();
-    };
 
   async function deleteEvent(id){
     if(CURRENT_ROLE !== "admin") return toast("Somente admin pode excluir.", true);
@@ -1581,54 +1273,6 @@
       toast("Procedimento excluído.");
     }catch(e){
       toast("Erro ao excluir: " + (e?.message||e), true);
-    // =========================
-    // 7) Screening Calendar + Save
-    // =========================
-    const cal = document.getElementById("screeningCalendar");
-    const monthLabel = document.getElementById("monthLabel");
-    const selectedDayLabel = document.getElementById("selectedDayLabel");
-    const btnPrevMonth = document.getElementById("btnPrevMonth");
-    const btnNextMonth = document.getElementById("btnNextMonth");
-
-    const procForm = document.getElementById("procForm");
-    const procPatient = document.getElementById("procPatient");
-    const procType = document.getElementById("procType");
-    const procTime = document.getElementById("procTime");
-    const btnSaveProcedure = document.getElementById("btnSaveProcedure");
-
-    // impede reload no submit
-    procForm.addEventListener("submit", (e) => e.preventDefault());
-
-    let viewDate = new Date(); // mês atual
-    let selectedDateISO = null;
-
-    btnPrevMonth.onclick = () => { viewDate.setMonth(viewDate.getMonth() - 1); renderCalendar(); };
-    btnNextMonth.onclick = () => { viewDate.setMonth(viewDate.getMonth() + 1); renderCalendar(); };
-
-    function pad2(n){ return String(n).padStart(2,"0"); }
-
-    function renderCalendar() {
-      const y = viewDate.getFullYear();
-      const m = viewDate.getMonth(); // 0-11
-      const first = new Date(y, m, 1);
-      const last = new Date(y, m + 1, 0);
-      const monthName = first.toLocaleDateString("pt-BR", { month:"long", year:"numeric" });
-
-      monthLabel.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
-
-      cal.innerHTML = "";
-
-      // cria dias do mês
-      for (let d = 1; d <= last.getDate(); d++) {
-        const iso = `${y}-${pad2(m+1)}-${pad2(d)}`;
-        const cell = document.createElement("div");
-        cell.className = "day";
-        cell.dataset.date = iso;
-        cell.textContent = d;
-
-        if (iso === selectedDateISO) cell.classList.add("selected");
-        cal.appendChild(cell);
-      }
     }
   }
 
@@ -1639,21 +1283,14 @@
     const today = new Date();
     const t0 = iso(today);
     const t1 = iso(new Date(today.getFullYear(), today.getMonth(), today.getDate()+1));
-    // clique no dia (robusto com closest)
-    cal.addEventListener("click", (e) => {
-      const cell = e.target.closest("[data-date]");
-      if (!cell) return;
 
     const due = EVENTS.filter(e => e.date===t0 || e.date===t1)
                       .sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
-      selectedDateISO = cell.dataset.date;
 
     if(!due.length){
       box.innerHTML = `<div class="mini"><b>Nenhum alerta</b><div class="small muted">Sem procedimentos para hoje/amanhã.</div></div>`;
       return;
     }
-      cal.querySelectorAll(".day.selected").forEach(x => x.classList.remove("selected"));
-      cell.classList.add("selected");
 
     for(const e of due){
       const when = e.date===t0 ? "HOJE" : "AMANHÃ";
@@ -1664,9 +1301,6 @@
         <div class="small muted">${esc(line)}</div>`;
       box.appendChild(card);
     }
-      const [yy, mm, dd] = selectedDateISO.split("-");
-      selectedDayLabel.textContent = `Dia selecionado: ${dd}/${mm}/${yy}`;
-    });
 
     // Notificação do navegador (1x por sessão) – simples e segura
     try{
@@ -1677,38 +1311,6 @@
           pushBrowserNotification("IEP Screening — HOJE", `${todayEvents.length} procedimento(s) hoje.`);
         }
         sessionStorage.setItem(key, "1");
-    // salvar procedimento
-    btnSaveProcedure.addEventListener("click", async (e) => {
-      e.preventDefault();
-
-      if (!selectedDateISO) return toast("Selecione um dia no calendário.", "err");
-      if (!auth.currentUser) return toast("Faça login para salvar.", "err");
-
-      const patientId = (procPatient.value || "").trim();
-      const tipo = (procType.value || "").trim();
-      const hora = (procTime.value || "").trim();
-
-      if (!patientId || !tipo) return toast("Preencha paciente e tipo.", "err");
-
-      try {
-        const [Y, M, D] = selectedDateISO.split("-").map(Number);
-        const dateObj = new Date(Y, M - 1, D, 12, 0, 0);
-
-        await addDoc(collection(db, "screening_procedures"), {
-          dateISO: selectedDateISO,
-          dateTS: Timestamp.fromDate(dateObj),
-          patientId,
-          tipo,
-          hora,
-          createdAt: serverTimestamp(),
-          createdBy: auth.currentUser.uid
-        });
-
-        toast("Procedimento salvo no Screening!", "ok");
-        procTime.value = "";
-      } catch (err) {
-        console.error("ERRO SCREENING SAVE:", err);
-        toast("Erro ao salvar Screening: " + (err.code || err.message), "err");
       }
     }catch{}
   }
@@ -1731,7 +1333,6 @@
     if(unsubEvents){ unsubEvents(); unsubEvents = startRealtimeEventsForCalendar(); }
     refreshScreeningUI();
   };
-    });
 
   // ======= Admin: criar usuário (orientação + atalho) =======
   // Aqui deixo só um alerta (mais seguro). Você cria no Firebase Console > Authentication.
@@ -1741,14 +1342,13 @@
   // Ajuste inicial
   $("motivoNaoElegivel").disabled = true;
   $("outroMotivo").disabled = true;
+
+  // Primeira render (sem dados)
   toggleOutroEnc();
   toggleOutroMotivo();
   refreshUI();
   refreshScreeningUI();
 </script>
-    // inicia calendário se abrir na aba screening
-    // renderCalendar();
 
-  </script>
 </body>
 </html>
